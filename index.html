@@ -920,7 +920,7 @@
         const VERIFICATION_CODE = '696';
 
         const DEFAULT_USERS = [
-            { id: 1, username: 'owner', password: 'Owner@2025', officialName: '', customId: '', ranks: ['مالك المموقع'] },
+            { id: 1, username: 'owner', password: 'Owner@2025', officialName: '', customId: '', ranks: ['مالك الموقع'] },
             { id: 2, username: 'minister', password: 'Minister@2025', officialName: '', customId: '', ranks: ['وزير الصحة'] },
             { id: 3, username: 'deputy_minister', password: 'DeputyMinister@2025', officialName: '', customId: '',
                 ranks: ['نائب وزير الصحة'] },
@@ -977,7 +977,7 @@
         }
 
         // ============================================================
-        // LOG SYSTEM - يسجل كل شيء
+        // LOG SYSTEM
         // ============================================================
         function addLog(username, rank, action, description, page, status) {
             try {
@@ -1040,7 +1040,7 @@
 
         function hasAnyRank(user, ranks) {
             if (!user) return false;
-            if (hasRank(user, 'مالك المموقع')) return true;
+            if (hasRank(user, 'مالك الموقع')) return true;
             return ranks.some(r => user.ranks && user.ranks.includes(r));
         }
 
@@ -1087,7 +1087,8 @@
                 'نائب وزير الصحة', 'رئيس الأطباء', 'نائب رئيس الأطباء'
             ]); }
 
-function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير الصحة', 'نائب وزير الصحة', 'رئيس الأطباء', 'نائب رئيس الأطباء'
+        function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير الصحة',
+                'نائب وزير الصحة', 'رئيس الأطباء', 'نائب رئيس الأطباء'
             ]); }
 
         function canManageDispatch(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير الصحة',
@@ -1140,7 +1141,7 @@ function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['ما
         function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
 
         // ============================================================
-        // NAVIGATION - سلس وسريع
+        // NAVIGATION
         // ============================================================
         document.querySelectorAll('[data-page]').forEach(el => {
             el.addEventListener('click', function(e) {
@@ -1148,20 +1149,17 @@ function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['ما
                 const page = this.dataset.page;
                 const user = getCurrentUser();
 
-                // التحقق من الصلاحيات
                 if (page === 'logs' && !canViewLogs(user)) { showToast('غير مصرح', 'error'); return; }
                 if (page === 'members' && !canViewMembers(user)) { showToast('غير مصرح', 'error'); return; }
                 if ((page === 'operations' || page === 'notices' || page === 'warnings' || page === 'dispatch' ||
                         page === 'profile') && !user) { showToast('الرجاء تسجيل الدخول', 'error'); return; }
 
-                // إزالة الكل وإظهار المطلوب
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 const target = document.querySelector(`#page-${page}`);
                 if (target) target.classList.add('active');
                 document.querySelectorAll('[data-page]').forEach(n => n.classList.remove('active'));
                 this.classList.add('active');
 
-                // تسجيل التنقل في اللوق
                 const name = user ? getUserDisplayName(user) : 'زائر';
                 const rank = user ? getHighestRank(user) || 'زائر' : 'زائر';
                 addLog(name, rank, 'تنقل بين الصفحات', `انتقل إلى ${this.textContent.trim()}`, page, 'نجحت');
@@ -1444,7 +1442,6 @@ function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['ما
                 notifCount.textContent = '0';
             }
 
-            // إظهار/إخفاء الروابط
             const logsNav = document.querySelector('[data-page="logs"]');
             if (logsNav) logsNav.style.display = canViewLogs(user) ? 'inline-block' : 'none';
             const membersNav = document.querySelector('[data-page="members"]');
@@ -1804,110 +1801,82 @@ function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['ما
             }).join('');
         }
 
-       function showAddDecreeModal() {
-    const user = getCurrentUser();
-    if (!canManageDecrees(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+        function showAddDecreeModal() {
+            const user = getCurrentUser();
+            if (!canManageDecrees(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
 
-    // تحديد أنواع المستندات المسموحة حسب الرتبة
-    let decreeTypes = '';
-    const isOwner = hasRank(user, 'مالك الموقع');
-    const isMinister = hasRank(user, 'وزير الصحة');
-    const isDeputyMinister = hasRank(user, 'نائب وزير الصحة');
-    const isChiefDoctor = hasRank(user, 'رئيس الأطباء');
-    const isDeputyChief = hasRank(user, 'نائب رئيس الأطباء');
+            let decreeTypes = '';
+            const isOwner = hasRank(user, 'مالك الموقع');
+            const isMinister = hasRank(user, 'وزير الصحة');
+            const isDeputyMinister = hasRank(user, 'نائب وزير الصحة');
+            const isChiefDoctor = hasRank(user, 'رئيس الأطباء');
+            const isDeputyChief = hasRank(user, 'نائب رئيس الأطباء');
 
-    if (isOwner || isMinister || isDeputyMinister) {
-        decreeTypes = `
-            <option value="قرار وزاري">قرار وزاري</option>
-            <option value="مرسوم وزاري">مرسوم وزاري</option>
-            <option value="تعميم">تعميم</option>
-            <option value="أمر إداري">أمر إداري</option>
-            <option value="تشكل لجنة">تشكل لجنة</option>
-        `;
-    } else if (isChiefDoctor || isDeputyChief) {
-        decreeTypes = `
-            <option value="قرار وزاري">قرار وزاري</option>
-            <option value="تعميم">تعميم</option>
-            <option value="أمر إداري">أمر إداري</option>
-            <option value="تشكل لجنة">تشكل لجنة</option>
-        `;
-        showToast('تنبيه: لا يمكنك إصدار مرسوم وزاري', 'warning');
-    }
+            if (isOwner || isMinister || isDeputyMinister) {
+                decreeTypes = `
+                    <option value="قرار وزاري">قرار وزاري</option>
+                    <option value="مرسوم وزاري">مرسوم وزاري</option>
+                    <option value="تعميم">تعميم</option>
+                    <option value="أمر إداري">أمر إداري</option>
+                    <option value="تشكل لجنة">تشكل لجنة</option>
+                `;
+            } else if (isChiefDoctor || isDeputyChief) {
+                decreeTypes = `
+                    <option value="قرار وزاري">قرار وزاري</option>
+                    <option value="تعميم">تعميم</option>
+                    <option value="أمر إداري">أمر إداري</option>
+                    <option value="تشكل لجنة">تشكل لجنة</option>
+                `;
+                showToast('تنبيه: لا يمكنك إصدار مرسوم وزاري', 'warning');
+            }
 
-    showModal(`
-        <h2><i class="fas fa-plus"></i> مستند جديد</h2>
-        <p class="text-muted">${isChiefDoctor || isDeputyChief ? '⚠️ لا يمكنك إصدار مرسوم وزاري' : 'جميع أنواع المستندات متاحة'}</p>
-        <div class="form-group">
-            <label>نوع المستند</label>
-            <select id="decreeType">${decreeTypes}</select>
-        </div>
-        <div class="form-group">
-            <label>رقم المستند</label>
-            <input type="text" id="decreeNumber" placeholder="مثال: 102" />
-        </div>
-        <div class="form-group">
-            <label>عنوان الموضوع</label>
-            <input type="text" id="decreeTitle" placeholder="عنوان المستند" />
-        </div>
-        <div class="form-group">
-            <label>نص المستند</label>
-            <textarea id="decreeContent" placeholder="نص المستند"></textarea>
-        </div>
-        <div class="form-group">
-            <label>الأولوية</label>
-            <select id="decreePriority">
-                <option value="عادية">عادية</option>
-                <option value="عاجلة">عاجلة</option>
-                <option value="عاجلة جداً">عاجلة جداً</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>تاريخ الإصدار</label>
-            <input type="date" id="decreeIssue" />
-        </div>
-        <div class="form-group">
-            <label>تاريخ النفاذ</label>
-            <input type="date" id="decreeEffective" />
-        </div>
-        <div class="form-group">
-            <label>الجهة المختصة</label>
-            <input type="text" id="decreeAuthority" placeholder="الجهة المختصة" />
-        </div>
-        <div class="form-group">
-            <label>رفع ملفات</label>
-            <input type="file" id="decreeFiles" multiple />
-        </div>
-        <div class="form-actions">
-            <button class="btn" onclick="addDecree()">إصدار</button>
-            <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
-        </div>
-    `);
-}
+            showModal(`
                 <h2><i class="fas fa-plus"></i> مستند جديد</h2>
-                <div class="form-group"><label>نوع المستند</label>
-                    <select id="decreeType">
-                        <option value="قرار وزاري">قرار وزاري</option>
-                        <option value="مرسوم وزاري">مرسوم وزاري</option>
-                        <option value="تعميم">تعميم</option>
-                        <option value="أمر إداري">أمر إداري</option>
-                        <option value="تشكل لجنة">تشكل لجنة</option>
-                    </select>
+                <p class="text-muted">${isChiefDoctor || isDeputyChief ? '⚠️ لا يمكنك إصدار مرسوم وزاري' : 'جميع أنواع المستندات متاحة'}</p>
+                <div class="form-group">
+                    <label>نوع المستند</label>
+                    <select id="decreeType">${decreeTypes}</select>
                 </div>
-                <div class="form-group"><label>رقم المستند</label><input type="text" id="decreeNumber" placeholder="مثال: 102" /></div>
-                <div class="form-group"><label>عنوان الموضوع</label><input type="text" id="decreeTitle" placeholder="اعتماد البلاغة التفتيذية" /></div>
-                <div class="form-group"><label>نص المستند</label><textarea id="decreeContent" placeholder="نص المستند"></textarea></div>
-                <div class="form-group"><label>الأولوية</label>
+                <div class="form-group">
+                    <label>رقم المستند</label>
+                    <input type="text" id="decreeNumber" placeholder="مثال: 102" />
+                </div>
+                <div class="form-group">
+                    <label>عنوان الموضوع</label>
+                    <input type="text" id="decreeTitle" placeholder="عنوان المستند" />
+                </div>
+                <div class="form-group">
+                    <label>نص المستند</label>
+                    <textarea id="decreeContent" placeholder="نص المستند"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>الأولوية</label>
                     <select id="decreePriority">
                         <option value="عادية">عادية</option>
                         <option value="عاجلة">عاجلة</option>
                         <option value="عاجلة جداً">عاجلة جداً</option>
                     </select>
                 </div>
-                <div class="form-group"><label>تاريخ الإصدار</label><input type="date" id="decreeIssue" /></div>
-                <div class="form-group"><label>تاريخ النفاذ</label><input type="date" id="decreeEffective" /></div>
-                <div class="form-group"><label>الجهة المختصة</label><input type="text" id="decreeAuthority" placeholder="الجهة المختصة" /></div>
-                <div class="form-group"><label>رفع ملفات</label><input type="file" id="decreeFiles" multiple /></div>
-                <div class="form-actions"><button class="btn" onclick="addDecree()">إصدار</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+                <div class="form-group">
+                    <label>تاريخ الإصدار</label>
+                    <input type="date" id="decreeIssue" />
+                </div>
+                <div class="form-group">
+                    <label>تاريخ النفاذ</label>
+                    <input type="date" id="decreeEffective" />
+                </div>
+                <div class="form-group">
+                    <label>الجهة المختصة</label>
+                    <input type="text" id="decreeAuthority" placeholder="الجهة المختصة" />
+                </div>
+                <div class="form-group">
+                    <label>رفع ملفات</label>
+                    <input type="file" id="decreeFiles" multiple />
+                </div>
+                <div class="form-actions">
+                    <button class="btn" onclick="addDecree()">إصدار</button>
+                    <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+                </div>
             `);
         }
 
@@ -1915,6 +1884,13 @@ function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['ما
             const data = getData();
             const user = getCurrentUser();
             const docType = document.getElementById('decreeType').value;
+
+            // منع رئيس الأطباء ونائبه من إصدار "مرسوم وزاري"
+            if (hasAnyRank(user, ['رئيس الأطباء', 'نائب رئيس الأطباء']) && docType === 'مرسوم وزاري') {
+                showToast('⚠️ غير مسموح لك بإصدار مرسوم وزاري', 'error');
+                return;
+            }
+
             const number = document.getElementById('decreeNumber').value.trim() || 'غير محدد';
             const title = document.getElementById('decreeTitle').value.trim() || 'بدون عنوان';
             const content = document.getElementById('decreeContent').value.trim() || 'نص المستند';
