@@ -1087,12 +1087,7 @@
                 'نائب وزير الصحة', 'رئيس الأطباء', 'نائب رئيس الأطباء'
             ]); }
 
-        function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير الصحة',
-                'نائب وزير الصحة'
-            ]); }
-
-        function canManageDecisions(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير الصحة',
-                'نائب وزير الصحة', 'رئيس الأطباء', 'نائب رئيس الأطباء'
+function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير الصحة', 'نائب وزير الصحة', 'رئيس الأطباء', 'نائب رئيس الأطباء'
             ]); }
 
         function canManageDispatch(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير الصحة',
@@ -1809,10 +1804,85 @@
             }).join('');
         }
 
-        function showAddDecreeModal() {
-            const user = getCurrentUser();
-            if (!canManageDecrees(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
-            showModal(`
+       function showAddDecreeModal() {
+    const user = getCurrentUser();
+    if (!canManageDecrees(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+
+    // تحديد أنواع المستندات المسموحة حسب الرتبة
+    let decreeTypes = '';
+    const isOwner = hasRank(user, 'مالك الموقع');
+    const isMinister = hasRank(user, 'وزير الصحة');
+    const isDeputyMinister = hasRank(user, 'نائب وزير الصحة');
+    const isChiefDoctor = hasRank(user, 'رئيس الأطباء');
+    const isDeputyChief = hasRank(user, 'نائب رئيس الأطباء');
+
+    if (isOwner || isMinister || isDeputyMinister) {
+        decreeTypes = `
+            <option value="قرار وزاري">قرار وزاري</option>
+            <option value="مرسوم وزاري">مرسوم وزاري</option>
+            <option value="تعميم">تعميم</option>
+            <option value="أمر إداري">أمر إداري</option>
+            <option value="تشكل لجنة">تشكل لجنة</option>
+        `;
+    } else if (isChiefDoctor || isDeputyChief) {
+        decreeTypes = `
+            <option value="قرار وزاري">قرار وزاري</option>
+            <option value="تعميم">تعميم</option>
+            <option value="أمر إداري">أمر إداري</option>
+            <option value="تشكل لجنة">تشكل لجنة</option>
+        `;
+        showToast('تنبيه: لا يمكنك إصدار مرسوم وزاري', 'warning');
+    }
+
+    showModal(`
+        <h2><i class="fas fa-plus"></i> مستند جديد</h2>
+        <p class="text-muted">${isChiefDoctor || isDeputyChief ? '⚠️ لا يمكنك إصدار مرسوم وزاري' : 'جميع أنواع المستندات متاحة'}</p>
+        <div class="form-group">
+            <label>نوع المستند</label>
+            <select id="decreeType">${decreeTypes}</select>
+        </div>
+        <div class="form-group">
+            <label>رقم المستند</label>
+            <input type="text" id="decreeNumber" placeholder="مثال: 102" />
+        </div>
+        <div class="form-group">
+            <label>عنوان الموضوع</label>
+            <input type="text" id="decreeTitle" placeholder="عنوان المستند" />
+        </div>
+        <div class="form-group">
+            <label>نص المستند</label>
+            <textarea id="decreeContent" placeholder="نص المستند"></textarea>
+        </div>
+        <div class="form-group">
+            <label>الأولوية</label>
+            <select id="decreePriority">
+                <option value="عادية">عادية</option>
+                <option value="عاجلة">عاجلة</option>
+                <option value="عاجلة جداً">عاجلة جداً</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>تاريخ الإصدار</label>
+            <input type="date" id="decreeIssue" />
+        </div>
+        <div class="form-group">
+            <label>تاريخ النفاذ</label>
+            <input type="date" id="decreeEffective" />
+        </div>
+        <div class="form-group">
+            <label>الجهة المختصة</label>
+            <input type="text" id="decreeAuthority" placeholder="الجهة المختصة" />
+        </div>
+        <div class="form-group">
+            <label>رفع ملفات</label>
+            <input type="file" id="decreeFiles" multiple />
+        </div>
+        <div class="form-actions">
+            <button class="btn" onclick="addDecree()">إصدار</button>
+            <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        </div>
+    `);
+}
                 <h2><i class="fas fa-plus"></i> مستند جديد</h2>
                 <div class="form-group"><label>نوع المستند</label>
                     <select id="decreeType">
