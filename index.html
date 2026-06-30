@@ -6,6 +6,7 @@
     <title>وزارة العدل - كراون ستي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -232,9 +233,16 @@
             align-items: center;
             gap: 12px;
         }
-        .logo-area img {
+        .logo-area .logo-icon {
+            width: 50px;
             height: 50px;
-            width: auto;
+            background: #1a3a5c;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.8rem;
         }
         .logo-area .site-title {
             font-size: 1.2rem;
@@ -677,7 +685,7 @@
     <header>
         <div class="container header-top">
             <div class="logo-area">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%231a3a5c'/%3E%3Cpath d='M30 40 L70 40 L70 60 L30 60 Z' fill='%23fff'/%3E%3Cpath d='M45 25 L55 25 L55 75 L45 75 Z' fill='%23fff'/%3E%3Ctext x='50' y='75' text-anchor='middle' fill='%23c9a84c' font-size='16' font-weight='bold' font-family='Arial'%3E⚖%3C/text%3E%3C/svg%3E" alt="شعار وزارة العدل" />
+                <div class="logo-icon"><i class="fas fa-gavel"></i></div>
                 <div class="site-title">وزارة العدل <span>· كراون ستي</span></div>
             </div>
             <div class="header-left">
@@ -708,8 +716,8 @@
                     <li><a data-page="notices"><i class="fas fa-bullhorn"></i> التنويهات</a></li>
                     <li><a data-page="warnings"><i class="fas fa-exclamation-triangle"></i> تحذيرات وترقيات</a></li>
                     <li><a data-page="rank-requests"><i class="fas fa-clipboard-list"></i> طلبات الرتب</a></li>
-                    <li><a data-page="health-clothes"><i class="fas fa-tshirt"></i> الأزياء القضائية</a></li>
-                    <li><a data-page="health-cars"><i class="fas fa-car"></i> السيارات العدلية</a></li>
+                    <li><a data-page="health-clothes"><i class="fas fa-tshirt"></i> ملابس العدل</a></li>
+                    <li><a data-page="health-cars"><i class="fas fa-car"></i> مركبات العدل</a></li>
                     <li><a data-page="logs"><i class="fas fa-clipboard-list"></i> سجل العمليات</a></li>
                     <li><a data-page="archive"><i class="fas fa-archive"></i> الأرشيف</a></li>
                     <li><a data-page="dispatch"><i class="fas fa-paper-plane"></i> الدسباتش</a></li>
@@ -837,20 +845,20 @@
             <div class="container"><div id="rankRequestsContainer" class="card-grid"></div></div>
         </div>
 
-        <!-- PAGE: HEALTH CLOTHES -->
+        <!-- PAGE: HEALTH CLOTHES (ملابس العدل) -->
         <div class="page" id="page-health-clothes">
             <div class="page-hero"><div class="container flex-between">
-                <div><h1>الأزياء القضائية</h1><p>جميع الأزياء والمعدات القضائية المتوفرة</p></div>
-                <div><button class="btn btn-sm" id="addClothesBtn" onclick="showAddHealthItemModal('clothes')"><i class="fas fa-plus"></i> إضافة زي</button></div>
+                <div><h1>ملابس العدل</h1><p>جميع الملابس والمعدات العدلية المتوفرة</p></div>
+                <div><button class="btn btn-sm" id="addClothesBtn" onclick="showAddHealthItemModal('clothes')"><i class="fas fa-plus"></i> إضافة ملابس</button></div>
             </div></div>
             <div class="container"><div id="healthClothesContainer" class="card-grid"></div></div>
         </div>
 
-        <!-- PAGE: HEALTH CARS -->
+        <!-- PAGE: HEALTH CARS (مركبات العدل) -->
         <div class="page" id="page-health-cars">
             <div class="page-hero"><div class="container flex-between">
-                <div><h1>السيارات العدلية</h1><p>جميع سيارات النقل والمركبات العدلية</p></div>
-                <div><button class="btn btn-sm" id="addCarsBtn" onclick="showAddHealthItemModal('cars')"><i class="fas fa-plus"></i> إضافة سيارة</button></div>
+                <div><h1>مركبات العدل</h1><p>جميع المركبات العدلية المتوفرة</p></div>
+                <div><button class="btn btn-sm" id="addCarsBtn" onclick="showAddHealthItemModal('cars')"><i class="fas fa-plus"></i> إضافة مركبة</button></div>
             </div></div>
             <div class="container"><div id="healthCarsContainer" class="card-grid"></div></div>
         </div>
@@ -870,7 +878,7 @@
                     <select id="archiveType" style="padding:10px 16px; border-radius:40px; border:1px solid #d1d9e6;">
                         <option value="all">الكل</option><option value="decree">مراسيم</option><option value="decision">قرارات</option>
                         <option value="notice">تنويهات</option><option value="warning">تحذيرات</option><option value="distribution">توزيعات</option>
-                        <option value="clothes">أزياء قضائية</option><option value="cars">سيارات عدلية</option>
+                        <option value="clothes">ملابس العدل</option><option value="cars">مركبات العدل</option>
                     </select>
                     <button class="btn btn-sm" onclick="searchArchive()"><i class="fas fa-search"></i> بحث</button>
                 </div>
@@ -923,17 +931,18 @@
         // ============================================================
         const VERIFICATION_CODE = '696';
 
+        // كلمات المرور العشوائية الجديدة
         const DEFAULT_USERS = [
-            { id: 1, username: 'owner', password: 'Owner@2025', officialName: '', customId: '', ranks: ['مالك الموقع'] },
-            { id: 2, username: 'justice_minister', password: 'JusticeMinister@2025', officialName: '', customId: '',
+            { id: 1, username: 'owner', password: 'X7kP9mR2', officialName: '', customId: '', ranks: ['مالك الموقع'] },
+            { id: 2, username: 'justice_minister', password: 'W4nQ8sL1', officialName: '', customId: '',
                 ranks: ['وزير العدل'] },
-            { id: 3, username: 'deputy_justice', password: 'DeputyJustice@2025', officialName: '', customId: '',
+            { id: 3, username: 'deputy_justice', password: 'Y3bT6cV9', officialName: '', customId: '',
                 ranks: ['نائب وزير العدل'] },
-            { id: 4, username: 'chief_justice', password: 'ChiefJustice@2025', officialName: '', customId: '',
+            { id: 4, username: 'chief_justice', password: 'H8rJ5kM2', officialName: '', customId: '',
                 ranks: ['المسؤول الأعلى لوزارة العدل'] },
-            { id: 5, username: 'deputy_chief_justice', password: 'DeputyChiefJustice@2025', officialName: '',
+            { id: 5, username: 'deputy_chief_justice', password: 'Z6pL9xF4', officialName: '',
                 customId: '', ranks: ['نائب المسؤول الأعلى لوزارة العدل'] },
-            { id: 6, username: 'chief_judge', password: 'ChiefJudge@2025', officialName: '', customId: '',
+            { id: 6, username: 'chief_judge', password: 'A2sD7gH3', officialName: '', customId: '',
                 ranks: ['رئيس القضاة'] }
         ];
 
@@ -1073,63 +1082,117 @@
         function getDisplayNameWithId(user) { return getUserDisplayName(user); }
 
         // ============================================================
-        // PERMISSIONS
+        // PERMISSIONS - Owner has ALL permissions
         // ============================================================
-        function canViewLogs(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل', 'نائب وزير العدل',
-                'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canViewLogs(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageNews(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageNews(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageNotices(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageNotices(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageWarnings(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageWarnings(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManagePromotions(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManagePromotions(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل'
-            ]); }
+        function canManageDecrees(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل']);
+        }
 
-        function canManageDecisions(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageDecisions(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageDispatch(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageDispatch(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canViewMembers(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canViewMembers(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageEmployeeOfWeek(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageEmployeeOfWeek(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canDeleteAny(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canDeleteAny(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canGiveSingleRank(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canGiveSingleRank(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageRankRequests(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageRankRequests(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
-        function canManageHealthItems(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
-            ]); }
+        function canManageHealthItems(u) {
+            if (!u) return false;
+            if (hasRank(u, 'مالك الموقع')) return true;
+            return hasAnyRank(u, ['وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل',
+                'رئيس القضاة'
+            ]);
+        }
 
         function isOwner(u) { return u && hasRank(u, 'مالك الموقع'); }
 
@@ -1899,10 +1962,12 @@
             const user = getCurrentUser();
             const docType = document.getElementById('decreeType').value;
 
-            // منع المسؤول الأعلى ونائبه ورئيس القضاة من إصدار "مرسوم وزاري"
-            if (hasAnyRank(user, ['المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة']) && docType === 'مرسوم وزاري') {
-                showToast('⚠️ غير مسموح لك بإصدار مرسوم وزاري', 'error');
-                return;
+            // Owner has ALL permissions, bypass restriction
+            if (!hasRank(user, 'مالك الموقع')) {
+                if (hasAnyRank(user, ['المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة']) && docType === 'مرسوم وزاري') {
+                    showToast('⚠️ غير مسموح لك بإصدار مرسوم وزاري', 'error');
+                    return;
+                }
             }
 
             const number = document.getElementById('decreeNumber').value.trim() || 'غير محدد';
@@ -2033,8 +2098,7 @@
         }
 
         // ============================================================
-        // WARNINGS & PROMOTIONS
-        // ============================================================
+        // WARNINGS & PROMOTIONS        // ============================================================
         function renderWarnings() {
             const data = getData();
             document.getElementById('warningsList').innerHTML = data.warnings.length === 0 ?
@@ -2368,7 +2432,7 @@
         }
 
         // ============================================================
-        // HEALTH ITEMS (Justice Items)
+        // HEALTH ITEMS (ملابس العدل & مركبات العدل)
         // ============================================================
         function renderHealthClothes() {
             const data = getData();
@@ -2376,7 +2440,7 @@
             const user = getCurrentUser();
             const canManage = canManageHealthItems(user);
             if (data.healthClothes.length === 0) { container.innerHTML =
-                `<div class="card"><p class="text-muted">لا توجد أزياء قضائية</p></div>`; return; }
+                `<div class="card"><p class="text-muted">لا توجد ملابس عدل</p></div>`; return; }
 
             container.innerHTML = data.healthClothes.map(item => `
                 <div class="card">
@@ -2405,7 +2469,7 @@
             const user = getCurrentUser();
             const canManage = canManageHealthItems(user);
             if (data.healthCars.length === 0) { container.innerHTML =
-                `<div class="card"><p class="text-muted">لا توجد سيارات عدلية</p></div>`; return; }
+                `<div class="card"><p class="text-muted">لا توجد مركبات عدل</p></div>`; return; }
 
             container.innerHTML = data.healthCars.map(item => `
                 <div class="card">
@@ -2432,8 +2496,8 @@
             const user = getCurrentUser();
             if (!canManageHealthItems(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
             const isClothes = type === 'clothes';
-            const title = isClothes ? 'إضافة زي قضائي' : 'إضافة سيارة عدلية';
-            const typeLabel = isClothes ? 'نوع الزي' : 'نوع السيارة';
+            const title = isClothes ? 'إضافة ملابس عدل' : 'إضافة مركبة عدل';
+            const typeLabel = isClothes ? 'نوع الملابس' : 'نوع المركبة';
             const typeOpts = isClothes ?
                 '<option value="عباءة قضائية">عباءة قضائية</option><option value="بدلة رسمية">بدلة رسمية</option><option value="ربطة عنق">ربطة عنق</option><option value="أخرى">أخرى</option>' :
                 '<option value="سيارة نقل">سيارة نقل</option><option value="سيارة رسمية">سيارة رسمية</option><option value="سيارة إسعاف">سيارة إسعاف</option><option value="أخرى">أخرى</option>';
@@ -2442,7 +2506,7 @@
                 `<div class="form-group"><label>المقاس</label><input type="text" id="healthItemSize" placeholder="M, L, XL" /></div>
                  <div class="form-group"><label>الكمية</label><input type="number" id="healthItemQuantity" placeholder="عدد القطع" /></div>
                  <div class="form-group"><label>الجهة</label><input type="text" id="healthItemDepartment" placeholder="الجهة التابعة" /></div>` :
-                `<div class="form-group"><label>الموديل</label><input type="text" id="healthItemModel" placeholder="موديل السيارة" /></div>
+                `<div class="form-group"><label>الموديل</label><input type="text" id="healthItemModel" placeholder="موديل المركبة" /></div>
                  <div class="form-group"><label>رقم اللوحة</label><input type="text" id="healthItemPlate" placeholder="رقم اللوحة" /></div>
                  <div class="form-group"><label>الحالة</label><select id="healthItemStatus"><option value="جاهزة">جاهزة</option><option value="قيد الصيانة">قيد الصيانة</option><option value="معطلة">معطلة</option><option value="مستأجرة">مستأجرة</option></select></div>`;
 
@@ -2482,7 +2546,7 @@
             const user = getCurrentUser();
             const isClothes = type === 'clothes';
             const key = isClothes ? 'healthClothes' : 'healthCars';
-            const label = isClothes ? 'زي' : 'سيارة';
+            const label = isClothes ? 'ملابس' : 'مركبة';
 
             let item = { id: getNextId(key), name, type: itemType, description, image: imageData,
                 date: new Date().toLocaleDateString('ar-SA'), addedBy: getUserDisplayName(user) };
@@ -2513,7 +2577,7 @@
             const idx = data[key].findIndex(x => x.id === id);
             if (idx === -1) return;
             const name = data[key][idx].name;
-            const label = type === 'clothes' ? 'زي' : 'سيارة';
+            const label = type === 'clothes' ? 'ملابس' : 'مركبة';
             data[key].splice(idx, 1);
             saveData(data);
             const user = getCurrentUser();
@@ -2713,8 +2777,8 @@
             if (type === 'all' || type === 'notice') add(data.notices, 'تنويه');
             if (type === 'all' || type === 'warning') add(data.warnings, 'تحذير');
             if (type === 'all' || type === 'distribution') add(data.distributions, 'توزيع');
-            if (type === 'all' || type === 'clothes') add(data.healthClothes, 'أزياء قضائية');
-            if (type === 'all' || type === 'cars') add(data.healthCars, 'سيارات عدلية');
+            if (type === 'all' || type === 'clothes') add(data.healthClothes, 'ملابس العدل');
+            if (type === 'all' || type === 'cars') add(data.healthCars, 'مركبات العدل');
 
             if (query) {
                 results = results.filter(r =>
@@ -2762,8 +2826,8 @@
                 { icon: 'fa-star', label: 'موظف الأسبوع', count: data.employeeOfWeek.length },
                 { icon: 'fa-clipboard-list', label: 'طلبات رتب معلقة', count: data.rankRequests.filter(r => r.status ===
                         'pending').length },
-                { icon: 'fa-tshirt', label: 'أزياء قضائية', count: data.healthClothes.length },
-                { icon: 'fa-car', label: 'سيارات عدلية', count: data.healthCars.length }
+                { icon: 'fa-tshirt', label: 'ملابس العدل', count: data.healthClothes.length },
+                { icon: 'fa-car', label: 'مركبات العدل', count: data.healthCars.length }
             ];
 
             showModal(`
@@ -2848,9 +2912,16 @@
 
         console.log('⚖️ نظام وزارة العدل كراون ستي يعمل بشكل كامل');
         console.log('👤 الحسابات: owner, justice_minister, deputy_justice, chief_justice, deputy_chief_justice, chief_judge');
-        console.log('🔑 كلمة المرور للجميع: @2025 (مثل: JusticeMinister@2025)');
+        console.log('🔑 كلمات المرور العشوائية الجديدة:');
+        console.log('   owner: X7kP9mR2');
+        console.log('   justice_minister: W4nQ8sL1');
+        console.log('   deputy_justice: Y3bT6cV9');
+        console.log('   chief_justice: H8rJ5kM2');
+        console.log('   deputy_chief_justice: Z6pL9xF4');
+        console.log('   chief_judge: A2sD7gH3');
         console.log('📌 جميع العمليات مسجلة في سجل العمليات');
         console.log('📌 يتم حفظ الجلسة تلقائياً');
+        console.log('👑 مالك الموقع لديه جميع الصلاحيات دون استثناء');
     </script>
 </body>
 </html>
