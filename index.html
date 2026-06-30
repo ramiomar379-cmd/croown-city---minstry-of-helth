@@ -446,8 +446,8 @@
             box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.3);
         }
 
-        /* ===== HEALTH ITEMS ===== */
-        .health-item-img {
+        /* ===== ITEMS ===== */
+        .item-img {
             width: 100px;
             height: 100px;
             border-radius: 12px;
@@ -458,12 +458,12 @@
             align-items: center;
             justify-content: center;
         }
-        .health-item-img img {
+        .item-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .health-item-img i {
+        .item-img i {
             font-size: 2.5rem;
             color: #94a3b8;
         }
@@ -818,13 +818,13 @@
                 <div>
                     <button class="btn btn-sm" onclick="showAddWarningModal()"><i class="fas fa-plus"></i> تحذير</button>
                     <button class="btn btn-sm btn-outline" onclick="showAddPromotionModal()"><i class="fas fa-plus"></i> ترقية</button>
-                    <button class="btn btn-sm btn-outline" onclick="showAddMedicOfWeekModal()"><i class="fas fa-star"></i> قاضي الأسبوع</button>
+                    <button class="btn btn-sm btn-outline" onclick="showAddEmployeeOfWeekModal()"><i class="fas fa-star"></i> موظف الأسبوع</button>
                 </div>
             </div></div>
             <div class="container"><div class="card-grid">
                 <div class="card"><h3>التحذيرات</h3><div id="warningsList"><p class="text-muted">لا توجد تحذيرات</p></div></div>
                 <div class="card"><h3>الترقيات</h3><div id="promotionsList"><p class="text-muted">لا توجد ترقيات</p></div></div>
-                <div class="card"><h3><i class="fas fa-star" style="color:#c9a84c;"></i> قاضي الأسبوع</h3><div id="medicOfWeekList"><p class="text-muted">لا يوجد قاضي أسبوع</p></div></div>
+                <div class="card"><h3><i class="fas fa-star" style="color:#c9a84c;"></i> موظف الأسبوع</h3><div id="employeeOfWeekList"><p class="text-muted">لا يوجد موظف أسبوع</p></div></div>
             </div></div>
         </div>
 
@@ -923,7 +923,6 @@
         // ============================================================
         const VERIFICATION_CODE = '696';
 
-        // الرتب القضائية الجديدة (20 رتبة)
         const DEFAULT_USERS = [
             { id: 1, username: 'owner', password: 'Owner@2025', officialName: '', customId: '', ranks: ['مالك الموقع'] },
             { id: 2, username: 'justice_minister', password: 'JusticeMinister@2025', officialName: '', customId: '',
@@ -933,15 +932,9 @@
             { id: 4, username: 'chief_justice', password: 'ChiefJustice@2025', officialName: '', customId: '',
                 ranks: ['المسؤول الأعلى لوزارة العدل'] },
             { id: 5, username: 'deputy_chief_justice', password: 'DeputyChiefJustice@2025', officialName: '',
-                customId: '', ranks: ['نائب المسؤول الأعلى لوزارة العدل'] }
-        ];
-
-        // الرتب الأخرى التي توجد في النظام
-        const OTHER_RANKS = [
-            'محامي عام', 'محامي مختص', 'محامي خبير', 'مستشار قانوني', 'النائب العام',
-            'مساعد القاضي', 'قاضي', 'قاضي خبير', 'قاضي متمكن', 'قاضي استئناف',
-            'وكيل محكمة', 'وكيل محكمة خبير', 'وكيل محكمة متمكن', 'وكيل المحاكم',
-            'رئيس المحكمة', 'رئيس القضاة'
+                customId: '', ranks: ['نائب المسؤول الأعلى لوزارة العدل'] },
+            { id: 6, username: 'chief_judge', password: 'ChiefJudge@2025', officialName: '', customId: '',
+                ranks: ['رئيس القضاة'] }
         ];
 
         // ============================================================
@@ -964,14 +957,14 @@
             dispatches: [],
             comments: [],
             logs: [],
-            medicOfWeek: [],
+            employeeOfWeek: [],
             rankRequests: [],
             healthClothes: [],
             healthCars: [],
             minister: { name: '', title: 'وزير العدل', bio: '', qual: '', experience: '', vision: '', mission: '',
                 message: '', achievements: '', email: '', phone: '', startDate: '' },
-            nextId: { user: 6, news: 1, decree: 1, decision: 1, notice: 1, warning: 1, promotion: 1, dispatch: 1,
-                medicOfWeek: 1, rankRequest: 1, healthClothes: 1, healthCars: 1 }
+            nextId: { user: 7, news: 1, decree: 1, decision: 1, notice: 1, warning: 1, promotion: 1, dispatch: 1,
+                employeeOfWeek: 1, rankRequest: 1, healthClothes: 1, healthCars: 1 }
         };
 
         if (!localStorage.getItem('moh_data')) {
@@ -1083,23 +1076,23 @@
         // PERMISSIONS
         // ============================================================
         function canViewLogs(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل', 'نائب وزير العدل',
-                'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManageNews(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManageNotices(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManageWarnings(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManagePromotions(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManageDecrees(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
@@ -1107,51 +1100,1755 @@
             ]); }
 
         function canManageDecisions(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManageDispatch(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canViewMembers(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
-        function canManageMedicOfWeek(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+        function canManageEmployeeOfWeek(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canDeleteAny(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canGiveSingleRank(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManageRankRequests(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function canManageHealthItems(u) { if (!u) return false; return hasAnyRank(u, ['مالك الموقع', 'وزير العدل',
-                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل'
+                'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة'
             ]); }
 
         function isOwner(u) { return u && hasRank(u, 'مالك الموقع'); }
 
         // ============================================================
-        // THE REST OF THE CODE (FUNCTIONS - same as before but with justice terms)
-        // The full code continues here with all functions...
+        // UI HELPERS
         // ============================================================
-        // Note: Due to length, the full JavaScript is the same as the health ministry version
-        // but with all text changed to justice-related terms.
-        // The full working version is in the complete HTML above.
+        function showToast(msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
 
-        console.log('✅ نظام وزارة العدل كراون ستي يعمل بشكل كامل');
-        console.log('👤 الحسابات: owner, justice_minister, deputy_justice, chief_justice, deputy_chief_justice');
+        function showModal(html) {
+            document.getElementById('modalContainer').innerHTML =
+                `<div class="modal-overlay" onclick="if(event.target===this) closeModal()"><div class="modal">${html}</div></div>`;
+        }
+
+        function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        document.querySelectorAll('[data-page]').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                const user = getCurrentUser();
+
+                if (page === 'logs' && !canViewLogs(user)) { showToast('غير مصرح', 'error'); return; }
+                if (page === 'members' && !canViewMembers(user)) { showToast('غير مصرح', 'error'); return; }
+                if ((page === 'operations' || page === 'notices' || page === 'warnings' || page === 'dispatch' ||
+                        page === 'profile') && !user) { showToast('الرجاء تسجيل الدخول', 'error'); return; }
+
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                const target = document.querySelector(`#page-${page}`);
+                if (target) target.classList.add('active');
+                document.querySelectorAll('[data-page]').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+
+                const name = user ? getUserDisplayName(user) : 'زائر';
+                const rank = user ? getHighestRank(user) || 'زائر' : 'زائر';
+                addLog(name, rank, 'تنقل بين الصفحات', `انتقل إلى ${this.textContent.trim()}`, page, 'نجحت');
+
+                renderAll();
+            });
+        });
+
+        // ============================================================
+        // AUTH
+        // ============================================================
+        function showLoginModal() {
+            showModal(`
+                <h2><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</h2>
+                <p class="text-muted">الحسابات المتاحة: owner, justice_minister, deputy_justice, chief_justice, deputy_chief_justice, chief_judge</p>
+                <div class="form-group"><label>اسم المستخدم</label><input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" /></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" /></div>
+                <div class="form-actions"><button class="btn" onclick="login()">دخول</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const data = getData();
+            const user = data.users.find(u => u.username === username && u.password === password);
+
+            addLog(username || 'unknown', 'unknown', 'محاولة دخول', `محاولة من ${username}`, 'auth', user ? 'نجحت' :
+            'فشلت');
+
+            if (user) {
+                const fullUser = { ...user };
+                setCurrentUser(fullUser);
+                closeModal();
+                const name = getUserDisplayName(user);
+                const rank = getHighestRank(user) || 'مجهول';
+                addLog(name, rank, 'تسجيل دخول ناجح', `قام ${name} بتسجيل الدخول`, 'auth', 'نجحت');
+
+                if (!user.officialName || !user.customId) {
+                    setTimeout(() => showSetProfileModal(), 500);
+                } else {
+                    showToast(`مرحباً ${name}`, 'success');
+                }
+                renderAll();
+            } else {
+                showToast('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+            }
+        }
+
+        function showSetProfileModal() {
+            const user = getCurrentUser();
+            if (!user) return;
+            showModal(`
+                <h2><i class="fas fa-user-edit"></i> إعداد الملف الشخصي</h2>
+                <div class="form-group"><label>الاسم الرسمي</label><input type="text" id="profileOfficialName" value="${user.officialName||''}" placeholder="أدخل اسمك الرسمي" /></div>
+                <div class="form-group"><label>الأيدي (ID)</label><input type="text" id="profileCustomId" value="${user.customId||''}" placeholder="أدخل رقم الأيدي" /></div>
+                <div class="form-actions"><button class="btn" onclick="saveProfileData()">حفظ</button></div>
+            `);
+        }
+
+        function saveProfileData() {
+            const officialName = document.getElementById('profileOfficialName').value.trim();
+            const customId = document.getElementById('profileCustomId').value.trim();
+            if (!officialName) { showToast('الرجاء إدخال الاسم الرسمي', 'error'); return; }
+            if (!customId) { showToast('الرجاء إدخال الأيدي', 'error'); return; }
+
+            const data = getData();
+            const user = getCurrentUser();
+            const dbUser = data.users.find(u => u.id === user.id);
+            if (dbUser) {
+                dbUser.officialName = officialName;
+                dbUser.customId = customId;
+                saveData(data);
+                user.officialName = officialName;
+                user.customId = customId;
+                setCurrentUser(user);
+                closeModal();
+                addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'تحديث الملف الشخصي',
+                    `تم تحديث الملف`, 'profile', 'نجحت');
+                showToast('تم حفظ البيانات', 'success');
+                updateUI();
+            }
+        }
+
+        function logout() {
+            const user = getCurrentUser();
+            if (user) {
+                addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'تسجيل خروج', `قام ${getUserDisplayName(user)} بتسجيل الخروج`,
+                    'auth', 'نجحت');
+            }
+            clearCurrentUser();
+            showToast('تم تسجيل الخروج', 'success');
+            renderAll();
+        }
+
+        function showUserMenu() {
+            const user = getCurrentUser();
+            if (!user) { showLoginModal(); return; }
+            const name = getUserDisplayName(user);
+            const ranks = (user.ranks || []).join('، ');
+            const saved = localStorage.getItem('moh_saved_session');
+            let sessionInfo = 'غير محفوظة';
+            if (saved) {
+                try {
+                    const d = JSON.parse(saved);
+                    const diff = Math.floor((new Date() - new Date(d.savedAt)) / (1000 * 60 * 60));
+                    sessionInfo = `محفوظة منذ ${diff} ساعة`;
+                } catch (e) {}
+            }
+            showModal(`
+                <h2><i class="fas fa-user"></i> ${name}</h2>
+                <p><strong>الاسم الرسمي:</strong> ${user.officialName||'غير محدد'}</p>
+                <p><strong>الأيدي:</strong> ${user.customId||'غير مسجل'}</p>
+                <p><strong>الرتب:</strong> ${ranks||'لا توجد'}</p>
+                <p><strong>حالة الجلسة:</strong> ${sessionInfo}</p>
+                ${isOwner(user)?'<p style="color:#006747;font-weight:600;"><i class="fas fa-crown"></i> مالك الموقع - جميع الصلاحيات</p>':''}
+                <div class="form-actions">
+                    <button class="btn btn-outline" onclick="closeModal();showSetProfileModal()"><i class="fas fa-user-edit"></i> تعديل الملف</button>
+                    ${canGiveSingleRank(user)?`<button class="btn btn-outline" onclick="closeModal();showChangeRankModal()">إدارة الرتب</button>`:''}
+                    <button class="btn btn-danger" onclick="closeModal();logout()">تسجيل الخروج</button>
+                    <button class="btn btn-outline" onclick="closeModal()">إغلاق</button>
+                </div>
+            `);
+        }
+
+        // ============================================================
+        // CHANGE RANK
+        // ============================================================
+        function showChangeRankModal() {
+            const u = getCurrentUser();
+            if (!u || !canGiveSingleRank(u)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            renderMembersWithGiveRank();
+        }
+
+        function renderMembersWithGiveRank() {
+            const data = getData();
+            const cu = getCurrentUser();
+            if (!canViewMembers(cu)) { showToast('غير مصرح', 'error'); return; }
+
+            let html = data.users.map(u => {
+                const name = getUserDisplayName(u);
+                const ranks = (u.ranks || []).join('، ') || 'بدون رتب';
+                const canGive = canGiveSingleRank(cu) && u.id !== cu.id;
+                const letter = (u.officialName || u.username || 'U')[0].toUpperCase();
+                return `
+                    <div class="member-card">
+                        <div class="member-info" style="display:flex;align-items:center;gap:12px;">
+                            <div class="member-avatar" onclick="showUserProfile(${u.id})">${letter}</div>
+                            <div><strong>${name}</strong><div style="font-size:0.8rem;color:#64748b;">${ranks}</div></div>
+                        </div>
+                        ${canGive?`<button class="btn-gold give-rank-btn" onclick="showGiveRankModal(${u.id},true)"><i class="fas fa-plus"></i> رتبة</button>`:''}
+                    </div>
+                `;
+            }).join('');
+
+            showModal(`
+                <h2><i class="fas fa-users"></i> إدارة الأعضاء والرتب</h2>
+                <div style="max-height:500px;overflow-y:auto;margin-top:16px;border:1px solid #edf2f7;border-radius:16px;">${html}</div>
+                <div class="form-actions"><button class="btn btn-outline" onclick="closeModal()">إغلاق</button></div>
+            `);
+        }
+
+        function showGiveRankModal(targetUserId, single = true) {
+            const cu = getCurrentUser();
+            if (!cu || !canGiveSingleRank(cu)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            const data = getData();
+            const target = data.users.find(u => u.id === targetUserId);
+            if (!target) { showToast('المستخدم غير موجود', 'error'); return; }
+
+            const allRanks = ['مالك الموقع', 'وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل',
+                'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة', 'رئيس المحكمة', 'وكيل المحاكم',
+                'وكيل محكمة متمكن', 'وكيل محكمة خبير', 'وكيل محكمة', 'قاضي استئناف', 'قاضي متمكن', 'قاضي خبير',
+                'قاضي', 'مساعد القاضي', 'النائب العام', 'مستشار قانوني', 'محامي خبير', 'محامي مختص', 'محامي عام'
+            ];
+            const available = allRanks.filter(r => !(target.ranks || []).includes(r));
+            if (available.length === 0) { showToast('يملك جميع الرتب', 'error'); return; }
+
+            let opts = available.map(r => `<option value="${r}">${r}</option>`).join('');
+
+            showModal(`
+                <h2><i class="fas fa-user-cog"></i> إعطاء رتبة</h2>
+                <p><strong>المستخدم:</strong> ${getUserDisplayName(target)}</p>
+                <p><strong>الرتب الحالية:</strong> ${(target.ranks||[]).join('، ')||'لا توجد'}</p>
+                <div class="form-group"><label>اختر الرتبة</label><select id="rankToGive">${opts}</select></div>
+                <div class="form-actions">
+                    <button class="btn" onclick="giveRankToUser(${target.id})">إعطاء رتبة</button>
+                    <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+                </div>
+            `);
+        }
+
+        function giveRankToUser(targetId) {
+            const rank = document.getElementById('rankToGive').value;
+            if (!rank) { showToast('اختر رتبة', 'error'); return; }
+            const data = getData();
+            const target = data.users.find(u => u.id === targetId);
+            if (!target) return;
+            if (!target.ranks) target.ranks = [];
+            if (target.ranks.includes(rank)) { showToast('يملك هذه الرتبة', 'error'); return; }
+            target.ranks.push(rank);
+            saveData(data);
+            const cu = getCurrentUser();
+            addLog(getUserDisplayName(cu), getHighestRank(cu) || 'مجهول', 'إعطاء رتبة',
+                `أعطى رتبة "${rank}" للمستخدم ${getUserDisplayName(target)}`, 'users', 'نجحت');
+            closeModal();
+            showToast(`تم إعطاء رتبة "${rank}"`, 'success');
+            renderAll();
+        }
+
+        function showUserProfile(userId) {
+            const data = getData();
+            const u = data.users.find(x => x.id === userId);
+            if (!u) return;
+            const name = getUserDisplayName(u);
+            const ranks = (u.ranks || []).join('، ') || 'لا توجد';
+            const canGive = canGiveSingleRank(getCurrentUser()) && u.id !== getCurrentUser()?.id;
+            showModal(`
+                <h2><i class="fas fa-user"></i> ${name}</h2>
+                <p><strong>الاسم الرسمي:</strong> ${u.officialName||'غير محدد'}</p>
+                <p><strong>الأيدي:</strong> ${u.customId||'غير مسجل'}</p>
+                <p><strong>الرتب:</strong> ${ranks}</p>
+                <div class="form-actions">
+                    ${canGive?`<button class="btn-gold" onclick="closeModal();showGiveRankModal(${u.id},true)">إعطاء رتبة</button>`:''}
+                    <button class="btn btn-outline" onclick="closeModal()">إغلاق</button>
+                </div>
+            `);
+        }
+
+        // ============================================================
+        // RENDER ALL
+        // ============================================================
+        function renderAll() {
+            renderNews();
+            renderDecrees();
+            renderNotices();
+            renderWarnings();
+            renderLogs();
+            renderDispatch();
+            renderDistributions();
+            renderProfile();
+            renderMinisterComments();
+            renderMembers();
+            renderEmployeeOfWeek();
+            renderRankRequests();
+            renderHealthClothes();
+            renderHealthCars();
+            updateUIButtons();
+        }
+
+        function updateUIButtons() {
+            const user = getCurrentUser();
+            const addNews = document.getElementById('addNewsBtn');
+            if (addNews) addNews.style.display = canManageNews(user) ? 'inline-block' : 'none';
+            const addClothes = document.getElementById('addClothesBtn');
+            if (addClothes) addClothes.style.display = canManageHealthItems(user) ? 'inline-block' : 'none';
+            const addCars = document.getElementById('addCarsBtn');
+            if (addCars) addCars.style.display = canManageHealthItems(user) ? 'inline-block' : 'none';
+        }
+
+        function updateUI() {
+            const user = getCurrentUser();
+            const display = document.getElementById('currentUserDisplay');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const notifCount = document.getElementById('notifCount');
+            const sessionIndicator = document.getElementById('sessionIndicator');
+
+            if (user) {
+                display.textContent = `${getUserDisplayName(user)} (${getHighestRank(user)||'بدون رتبة'})`;
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                if (isSessionSaved()) sessionIndicator.classList.remove('hidden');
+                else sessionIndicator.classList.add('hidden');
+                const data = getData();
+                notifCount.textContent = data.notices ? data.notices.length : 0;
+            } else {
+                display.textContent = 'مواطن';
+                loginBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                sessionIndicator.classList.add('hidden');
+                notifCount.textContent = '0';
+            }
+
+            const logsNav = document.querySelector('[data-page="logs"]');
+            if (logsNav) logsNav.style.display = canViewLogs(user) ? 'inline-block' : 'none';
+            const membersNav = document.querySelector('[data-page="members"]');
+            if (membersNav) membersNav.style.display = canViewMembers(user) ? 'inline-block' : 'none';
+            const opsNav = document.querySelector('[data-page="operations"]');
+            if (opsNav) opsNav.style.display = user ? 'inline-block' : 'none';
+            const noticesNav = document.querySelector('[data-page="notices"]');
+            if (noticesNav) noticesNav.style.display = user ? 'inline-block' : 'none';
+            const warningsNav = document.querySelector('[data-page="warnings"]');
+            if (warningsNav) warningsNav.style.display = user ? 'inline-block' : 'none';
+            const dispatchNav = document.querySelector('[data-page="dispatch"]');
+            if (dispatchNav) dispatchNav.style.display = user ? 'inline-block' : 'none';
+            const profileNav = document.querySelector('[data-page="profile"]');
+            if (profileNav) profileNav.style.display = user ? 'inline-block' : 'none';
+
+            renderAll();
+        }
+
+        // ============================================================
+        // NEWS FUNCTIONS
+        // ============================================================
+        function renderNews() {
+            const data = getData();
+            const container = document.getElementById('newsContainer');
+            const user = getCurrentUser();
+            const canEdit = canManageNews(user);
+
+            if (data.news.length === 0) {
+                container.innerHTML = `<div class="card"><p class="text-muted">لا توجد أخبار</p></div>`;
+                return;
+            }
+
+            container.innerHTML = data.news.map(n => `
+                <div class="card">
+                    <h3><i class="fas fa-bullhorn"></i> ${n.title}</h3>
+                    <div class="meta"><i class="far fa-calendar-alt"></i> ${n.date} · <span class="rank-tag">${n.authorRank}</span></div>
+                    <p>${n.content}</p>
+                    ${n.files&&n.files.length?`<div class="file-preview">${n.files.map(f=>`<span class="file-item"><i class="fas fa-paperclip"></i> ${f}</span>`).join('')}</div>`:''}
+                    <div class="qr-seal"><i class="fas fa-qrcode"></i> رمز: #MOJ-NEWS-${n.id}</div>
+                    ${canEdit?`
+                        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                            <button class="btn btn-sm btn-outline" onclick="editNews(${n.id})"><i class="fas fa-edit"></i> تعديل</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteNews(${n.id})"><i class="fas fa-trash"></i> حذف</button>
+                        </div>
+                    `:''}
+                    <div class="comment-box">
+                        <h4>التعليقات</h4>
+                        <div id="newsComments_${n.id}">${renderComments('news', n.id)}</div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                            <input type="text" id="newsCommentName_${n.id}" placeholder="اسمك" style="flex:1;min-width:120px;padding:8px 12px;border:1px solid #d1d9e6;border-radius:8px;" />
+                            <input type="text" id="newsCommentId_${n.id}" placeholder="الأيدي" style="flex:0.5;min-width:100px;padding:8px 12px;border:1px solid #d1d9e6;border-radius:8px;" />
+                        </div>
+                        <textarea id="newsCommentInput_${n.id}" rows="2" placeholder="نص التعليق"></textarea>
+                        <div class="actions"><button class="btn btn-sm" onclick="addComment('news',${n.id})">نشر التعليق</button></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddNewsModal() {
+            const user = getCurrentUser();
+            if (!canManageNews(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            showModal(`
+                <h2><i class="fas fa-plus"></i> خبر جديد</h2>
+                <div class="form-group"><label>العنوان</label><input type="text" id="newsTitle" placeholder="عنوان الخبر" /></div>
+                <div class="form-group"><label>المحتوى</label><textarea id="newsContent" placeholder="نص الخبر"></textarea></div>
+                <div class="form-group"><label>رفع ملفات</label><input type="file" id="newsFiles" multiple /></div>
+                <div class="form-actions"><button class="btn" onclick="addNews()">نشر</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addNews() {
+            const title = document.getElementById('newsTitle').value.trim();
+            const content = document.getElementById('newsContent').value.trim();
+            if (!title || !content) { showToast('املأ جميع الحقول', 'error'); return; }
+
+            const files = [];
+            const fi = document.getElementById('newsFiles');
+            if (fi.files) { for (let f of fi.files) files.push(f.name); }
+
+            const data = getData();
+            const user = getCurrentUser();
+            const n = {
+                id: getNextId('news'),
+                title,
+                content,
+                date: new Date().toLocaleDateString('ar-SA'),
+                author: getUserDisplayName(user),
+                authorRank: getHighestRank(user) || 'زائر',
+                files
+            };
+            data.news.push(n);
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'زائر', 'نشر خبر', `نشر خبر: ${title}`, 'news', 'نجحت');
+            closeModal();
+            showToast('تم نشر الخبر', 'success');
+            renderNews();
+        }
+
+        function editNews(id) {
+            const data = getData();
+            const n = data.news.find(x => x.id === id);
+            if (!n) return;
+            showModal(`
+                <h2><i class="fas fa-edit"></i> تعديل الخبر</h2>
+                <div class="form-group"><label>العنوان</label><input type="text" id="editNewsTitle" value="${n.title}" /></div>
+                <div class="form-group"><label>المحتوى</label><textarea id="editNewsContent">${n.content}</textarea></div>
+                <div class="form-group"><label>رفع ملفات</label><input type="file" id="editNewsFiles" multiple /></div>
+                ${n.files&&n.files.length?`<div class="file-preview">${n.files.map(f=>`<span class="file-item"><i class="fas fa-paperclip"></i> ${f}</span>`).join('')}</div>`:''}
+                <div class="form-actions"><button class="btn" onclick="saveEditNews(${id})">حفظ</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function saveEditNews(id) {
+            const data = getData();
+            const n = data.news.find(x => x.id === id);
+            if (!n) return;
+            const title = document.getElementById('editNewsTitle').value.trim();
+            const content = document.getElementById('editNewsContent').value.trim();
+            if (!title || !content) { showToast('املأ الحقول', 'error'); return; }
+            const files = n.files || [];
+            const fi = document.getElementById('editNewsFiles');
+            if (fi.files) { for (let f of fi.files) files.push(f.name); }
+            n.title = title;
+            n.content = content;
+            n.files = files;
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'زائر', 'تعديل خبر', `تعديل خبر: ${title}`, 'news', 'نجحت');
+            closeModal();
+            showToast('تم تعديل الخبر', 'success');
+            renderNews();
+        }
+
+        function deleteNews(id) {
+            if (!confirm('حذف الخبر؟')) return;
+            const data = getData();
+            const idx = data.news.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            const title = data.news[idx].title;
+            data.news.splice(idx, 1);
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'زائر', 'حذف خبر', `حذف خبر: ${title}`, 'news', 'نجحت');
+            showToast('تم حذف الخبر', 'success');
+            renderNews();
+        }
+
+        // ============================================================
+        // COMMENTS
+        // ============================================================
+        function renderComments(type, id) {
+            const data = getData();
+            const comments = data.comments.filter(c => c.type === type && c.id === id);
+            const cu = getCurrentUser();
+            if (comments.length === 0) return '<p class="text-muted">لا توجد تعليقات</p>';
+            return comments.map(c => {
+                const letter = c.author ? c.author.charAt(0).toUpperCase() : 'U';
+                return `
+                    <div class="comment-item">
+                        <div style="display:flex;align-items:center;gap:10px;flex:1;">
+                            <div class="user-avatar" style="cursor:default;">${letter}</div>
+                            <span><strong>${c.author}</strong>: ${c.text}</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-xs btn-outline" onclick="reportComment(${c.commentId})"><i class="fas fa-flag"></i></button>
+                            ${canManageNews(cu)?`<button class="btn btn-xs btn-danger" onclick="deleteComment(${c.commentId})"><i class="fas fa-trash"></i></button>`:''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addComment(type, id) {
+            const name = document.getElementById(`${type}CommentName_${id}`).value.trim();
+            const cid = document.getElementById(`${type}CommentId_${id}`).value.trim();
+            const text = document.getElementById(`${type}CommentInput_${id}`).value.trim();
+            if (!text) { showToast('اكتب تعليقاً', 'error'); return; }
+            if (!name) { showToast('أدخل اسمك', 'error'); return; }
+            if (!cid) { showToast('أدخل الأيدي', 'error'); return; }
+
+            const data = getData();
+            data.comments.push({
+                commentId: Date.now() + Math.random(),
+                type,
+                id,
+                text,
+                author: name + (cid ? ` (${cid})` : ''),
+                date: new Date().toLocaleString('ar-SA')
+            });
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(user ? getUserDisplayName(user) : name, user ? getHighestRank(user) || 'زائر' : 'زائر', 'إضافة تعليق',
+                `أضاف تعليقاً: "${text.substring(0,30)}..."`, type === 'news' ? 'news' : 'minister', 'نجحت');
+            document.getElementById(`${type}CommentInput_${id}`).value = '';
+            document.getElementById(`${type}CommentName_${id}`).value = '';
+            document.getElementById(`${type}CommentId_${id}`).value = '';
+            showToast('تم إضافة التعليق', 'success');
+            renderAll();
+        }
+
+        function reportComment(commentId) {
+            const user = getCurrentUser();
+            addLog(user ? getUserDisplayName(user) : 'مواطن', user ? getHighestRank(user) || 'زائر' : 'زائر', 'إبلاغ عن تعليق',
+                'تم الإبلاغ عن تعليق', 'comments', 'نجحت');
+            showToast('تم الإبلاغ', 'success');
+        }
+
+        function deleteComment(commentId) {
+            if (!confirm('حذف التعليق؟')) return;
+            const data = getData();
+            const idx = data.comments.findIndex(c => c.commentId === commentId);
+            if (idx === -1) return;
+            data.comments.splice(idx, 1);
+            saveData(data);
+            showToast('تم حذف التعليق', 'success');
+            renderAll();
+        }
+
+        // ============================================================
+        // MINISTER
+        // ============================================================
+        function renderMinisterComments() {
+            const data = getData();
+            const container = document.getElementById('ministerComments');
+            const comments = data.comments.filter(c => c.type === 'minister');
+            if (comments.length === 0) { container.innerHTML = '<p class="text-muted">لا توجد تعليقات</p>'; return; }
+            container.innerHTML = comments.map(c =>
+                `<div class="comment-item"><span><i class="fas fa-user-circle"></i> ${c.author}: ${c.text}</span><button class="btn btn-xs btn-outline" onclick="reportComment(${c.commentId})"><i class="fas fa-flag"></i></button></div>`
+                ).join('');
+        }
+
+        function addMinisterComment() {
+            const name = document.getElementById('ministerCommentName').value.trim();
+            const cid = document.getElementById('ministerCommentId').value.trim();
+            const text = document.getElementById('ministerCommentInput').value.trim();
+            if (!text) { showToast('اكتب تعليقاً', 'error'); return; }
+            if (!name) { showToast('أدخل اسمك', 'error'); return; }
+            if (!cid) { showToast('أدخل الأيدي', 'error'); return; }
+
+            const data = getData();
+            data.comments.push({
+                commentId: Date.now() + Math.random(),
+                type: 'minister',
+                id: 0,
+                text,
+                author: name + (cid ? ` (${cid})` : ''),
+                date: new Date().toLocaleString('ar-SA')
+            });
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(user ? getUserDisplayName(user) : name, user ? getHighestRank(user) || 'زائر' : 'زائر', 'إضافة تعليق',
+                `أضاف تعليقاً على صفحة الوزير`, 'minister', 'نجحت');
+            document.getElementById('ministerCommentInput').value = '';
+            document.getElementById('ministerCommentName').value = '';
+            document.getElementById('ministerCommentId').value = '';
+            showToast('تم إضافة التعليق', 'success');
+            renderMinisterComments();
+        }
+
+        function showEditMinisterModal() {
+            const data = getData();
+            const m = data.minister;
+            showModal(`
+                <h2><i class="fas fa-edit"></i> تعديل بيانات الوزير</h2>
+                <div class="form-group"><label>الاسم الكامل</label><input type="text" id="editMinName" value="${m.name||''}" /></div>
+                <div class="form-group"><label>السيرة الذاتية</label><textarea id="editMinBio">${m.bio||''}</textarea></div>
+                <div class="form-group"><label>المؤهلات</label><textarea id="editMinQual">${m.qual||''}</textarea></div>
+                <div class="form-group"><label>سنوات الخبرة</label><input type="text" id="editMinExp" value="${m.experience||''}" /></div>
+                <div class="form-group"><label>الرؤية</label><input type="text" id="editMinVision" value="${m.vision||''}" /></div>
+                <div class="form-group"><label>الرسالة</label><input type="text" id="editMinMission" value="${m.mission||''}" /></div>
+                <div class="form-group"><label>كلمة الوزير</label><textarea id="editMinMessage">${m.message||''}</textarea></div>
+                <div class="form-group"><label>الإنجازات</label><textarea id="editMinAchieve">${m.achievements||''}</textarea></div>
+                <div class="form-group"><label>البريد الإلكتروني</label><input type="text" id="editMinEmail" value="${m.email||''}" /></div>
+                <div class="form-group"><label>رقم المكتب</label><input type="text" id="editMinPhone" value="${m.phone||''}" /></div>
+                <div class="form-group"><label>تاريخ استلام المنصب</label><input type="text" id="editMinStart" value="${m.startDate||''}" /></div>
+                <div class="form-actions"><button class="btn" onclick="saveMinister()">حفظ</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function saveMinister() {
+            const data = getData();
+            const m = data.minister;
+            const user = getCurrentUser();
+            const old = { ...m };
+            m.name = document.getElementById('editMinName').value.trim() || m.name;
+            m.bio = document.getElementById('editMinBio').value.trim() || m.bio;
+            m.qual = document.getElementById('editMinQual').value.trim() || m.qual;
+            m.experience = document.getElementById('editMinExp').value.trim() || m.experience;
+            m.vision = document.getElementById('editMinVision').value.trim() || m.vision;
+            m.mission = document.getElementById('editMinMission').value.trim() || m.mission;
+            m.message = document.getElementById('editMinMessage').value.trim() || m.message;
+            m.achievements = document.getElementById('editMinAchieve').value.trim() || m.achievements;
+            m.email = document.getElementById('editMinEmail').value.trim() || m.email;
+            m.phone = document.getElementById('editMinPhone').value.trim() || m.phone;
+            m.startDate = document.getElementById('editMinStart').value.trim() || m.startDate;
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'زائر', 'تعديل بيانات الوزير',
+                `تم تحديث بيانات وزير العدل`, 'minister', 'نجحت');
+            closeModal();
+            showToast('تم تحديث بيانات الوزير', 'success');
+            renderAll();
+            document.getElementById('ministerName').textContent = m.name || 'وزير العدل';
+            document.getElementById('ministerBio').textContent = m.bio || '(بيانات الوزير)';
+            document.getElementById('ministerQuals').textContent = m.qual || '(بيانات الوزير)';
+            document.getElementById('ministerExperience').textContent = m.experience || '(بيانات الوزير)';
+            document.getElementById('ministerVision').textContent = m.vision || '(بيانات الوزير)';
+            document.getElementById('ministerMission').textContent = m.mission || '(بيانات الوزير)';
+            document.getElementById('ministerMessage').textContent = m.message || '(بيانات الوزير)';
+            document.getElementById('ministerAchievements').textContent = m.achievements || '(بيانات الوزير)';
+            document.getElementById('ministerEmail').textContent = m.email || '(بيانات الوزير)';
+            document.getElementById('ministerPhone').textContent = m.phone || '(بيانات الوزير)';
+            document.getElementById('ministerStartDate').textContent = m.startDate || '(بيانات الوزير)';
+        }
+
+        // ============================================================
+        // DECREES
+        // ============================================================
+        function renderDecrees() {
+            const data = getData();
+            const container = document.getElementById('decreesContainer');
+            const user = getCurrentUser();
+            const canDelete = canDeleteAny(user);
+            const all = [...data.decrees, ...data.decisions];
+
+            if (all.length === 0) { container.innerHTML = `<div class="card"><p class="text-muted">لا توجد مراسيم أو قرارات</p></div>`; return; }
+
+            container.innerHTML = all.map(item => {
+                let pb = '';
+                if (item.priority === 'عاجلة جداً') pb =
+                    `<span class="badge badge-very-urgent"><i class="fas fa-exclamation-circle"></i> عاجلة جداً</span>`;
+                else if (item.priority === 'عاجلة') pb =
+                    `<span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> عاجلة</span>`;
+                else pb = `<span class="badge badge-info">عادية</span>`;
+
+                const typeNames = { 'قرار وزاري': 'قرار وزاري', 'مرسوم وزاري': 'مرسوم وزاري', 'تعميم': 'تعميم',
+                    'أمر إداري': 'أمر إداري', 'تشكل لجنة': 'تشكل لجنة' };
+                const tn = typeNames[item.docType] || item.docType || 'مستند';
+
+                return `
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                            <h4><i class="fas ${item.type==='decree'?'fa-scroll':'fa-file-signature'}"></i> ${tn} رقم ${item.number}</h4>
+                            ${pb}
+                        </div>
+                        <p><strong>${item.title}</strong></p>
+                        <p>${item.content}</p>
+                        <div class="meta">تاريخ الإصدار: ${item.issueDate} · النفاذ: ${item.effectiveDate||'غير محدد'}</div>
+                        <div><span class="rank-tag">${item.authorRank}</span></div>
+                        ${item.files&&item.files.length?`<div class="file-preview">${item.files.map(f=>`<span class="file-item"><i class="fas fa-paperclip"></i> ${f}</span>`).join('')}</div>`:''}
+                        <div class="qr-seal"><i class="fas fa-qrcode"></i> #MOJ-${item.type}-${item.id}</div>
+                        <div><i class="fas fa-check-circle" style="color:#006747;"></i> الحالة: ${item.status||'نافذ'}</div>
+                        <div style="margin-top:8px;font-size:0.8rem;color:#64748b;"><i class="fas fa-stamp"></i> ختم وزارة العدل · توقيع إلكتروني</div>
+                        ${canDelete?`<div style="margin-top:12px;"><button class="btn btn-sm btn-danger" onclick="deleteDecree(${item.id},'${item.type}')"><i class="fas fa-trash"></i> حذف</button></div>`:''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddDecreeModal() {
+            const user = getCurrentUser();
+            if (!canManageDecrees(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+
+            let decreeTypes = '';
+            const isOwner = hasRank(user, 'مالك الموقع');
+            const isMinister = hasRank(user, 'وزير العدل');
+            const isDeputyMinister = hasRank(user, 'نائب وزير العدل');
+            const isChief = hasRank(user, 'المسؤول الأعلى لوزارة العدل');
+            const isDeputyChief = hasRank(user, 'نائب المسؤول الأعلى لوزارة العدل');
+            const isChiefJudge = hasRank(user, 'رئيس القضاة');
+
+            if (isOwner || isMinister || isDeputyMinister) {
+                decreeTypes = `
+                    <option value="قرار وزاري">قرار وزاري</option>
+                    <option value="مرسوم وزاري">مرسوم وزاري</option>
+                    <option value="تعميم">تعميم</option>
+                    <option value="أمر إداري">أمر إداري</option>
+                    <option value="تشكل لجنة">تشكل لجنة</option>
+                `;
+            } else if (isChief || isDeputyChief || isChiefJudge) {
+                decreeTypes = `
+                    <option value="قرار وزاري">قرار وزاري</option>
+                    <option value="تعميم">تعميم</option>
+                    <option value="أمر إداري">أمر إداري</option>
+                    <option value="تشكل لجنة">تشكل لجنة</option>
+                `;
+                showToast('تنبيه: لا يمكنك إصدار مرسوم وزاري', 'warning');
+            }
+
+            showModal(`
+                <h2><i class="fas fa-plus"></i> مستند جديد</h2>
+                <p class="text-muted">${(isChief || isDeputyChief || isChiefJudge) ? '⚠️ لا يمكنك إصدار مرسوم وزاري' : 'جميع أنواع المستندات متاحة'}</p>
+                <div class="form-group">
+                    <label>نوع المستند</label>
+                    <select id="decreeType">${decreeTypes}</select>
+                </div>
+                <div class="form-group">
+                    <label>رقم المستند</label>
+                    <input type="text" id="decreeNumber" placeholder="مثال: 102" />
+                </div>
+                <div class="form-group">
+                    <label>عنوان الموضوع</label>
+                    <input type="text" id="decreeTitle" placeholder="عنوان المستند" />
+                </div>
+                <div class="form-group">
+                    <label>نص المستند</label>
+                    <textarea id="decreeContent" placeholder="نص المستند"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>الأولوية</label>
+                    <select id="decreePriority">
+                        <option value="عادية">عادية</option>
+                        <option value="عاجلة">عاجلة</option>
+                        <option value="عاجلة جداً">عاجلة جداً</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الإصدار</label>
+                    <input type="date" id="decreeIssue" />
+                </div>
+                <div class="form-group">
+                    <label>تاريخ النفاذ</label>
+                    <input type="date" id="decreeEffective" />
+                </div>
+                <div class="form-group">
+                    <label>الجهة المختصة</label>
+                    <input type="text" id="decreeAuthority" placeholder="الجهة المختصة" />
+                </div>
+                <div class="form-group">
+                    <label>رفع ملفات</label>
+                    <input type="file" id="decreeFiles" multiple />
+                </div>
+                <div class="form-actions">
+                    <button class="btn" onclick="addDecree()">إصدار</button>
+                    <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+                </div>
+            `);
+        }
+
+        function addDecree() {
+            const data = getData();
+            const user = getCurrentUser();
+            const docType = document.getElementById('decreeType').value;
+
+            // منع المسؤول الأعلى ونائبه ورئيس القضاة من إصدار "مرسوم وزاري"
+            if (hasAnyRank(user, ['المسؤول الأعلى لوزارة العدل', 'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة']) && docType === 'مرسوم وزاري') {
+                showToast('⚠️ غير مسموح لك بإصدار مرسوم وزاري', 'error');
+                return;
+            }
+
+            const number = document.getElementById('decreeNumber').value.trim() || 'غير محدد';
+            const title = document.getElementById('decreeTitle').value.trim() || 'بدون عنوان';
+            const content = document.getElementById('decreeContent').value.trim() || 'نص المستند';
+            const priority = document.getElementById('decreePriority').value;
+            const issueDate = document.getElementById('decreeIssue').value || new Date().toISOString().split('T')[0];
+            const effectiveDate = document.getElementById('decreeEffective').value || 'غير محدد';
+            const authority = document.getElementById('decreeAuthority').value.trim() || 'غير محدد';
+
+            if (!title || !content) { showToast('املأ جميع الحقول', 'error'); return; }
+
+            const files = [];
+            const fi = document.getElementById('decreeFiles');
+            if (fi.files) { for (let f of fi.files) files.push(f.name); }
+
+            const type = (docType === 'مرسوم وزاري') ? 'decree' : 'decision';
+            const item = {
+                id: getNextId(type),
+                type,
+                docType,
+                number,
+                title,
+                content,
+                priority,
+                issueDate,
+                effectiveDate,
+                authority,
+                authorRank: getHighestRank(user) || 'مجهول',
+                status: 'نافذ',
+                files
+            };
+
+            if (type === 'decree') data.decrees.push(item);
+            else data.decisions.push(item);
+            saveData(data);
+
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', `إصدار ${docType}`,
+                `${docType} رقم ${number}: ${title} (الأولوية: ${priority})`, 'decrees', 'نجحت');
+            closeModal();
+            showToast(`تم إصدار ${docType}`, 'success');
+            renderDecrees();
+        }
+
+        function deleteDecree(id, type) {
+            if (!confirm('حذف المستند؟')) return;
+            const data = getData();
+            const key = type === 'decree' ? 'decrees' : 'decisions';
+            const idx = data[key].findIndex(x => x.id === id);
+            if (idx === -1) return;
+            const title = data[key][idx].title;
+            const docType = data[key][idx].docType || 'مستند';
+            data[key].splice(idx, 1);
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', `حذف ${docType}`, `تم حذف ${docType}: ${title}`,
+                'decrees', 'نجحت');
+            showToast('تم حذف المستند', 'success');
+            renderDecrees();
+        }
+
+        // ============================================================
+        // NOTICES
+        // ============================================================
+        function renderNotices() {
+            const data = getData();
+            const container = document.getElementById('noticesContainer');
+            const user = getCurrentUser();
+            const canDelete = canDeleteAny(user);
+            if (data.notices.length === 0) { container.innerHTML = `<div class="card"><p class="text-muted">لا توجد تنويهات</p></div>`; return; }
+            container.innerHTML = data.notices.map(n => `
+                <div class="card">
+                    <h3><i class="fas fa-bullhorn"></i> ${n.title}</h3>
+                    <p>${n.content}</p>
+                    ${n.files&&n.files.length?`<div class="file-preview">${n.files.map(f=>`<span class="file-item"><i class="fas fa-paperclip"></i> ${f}</span>`).join('')}</div>`:''}
+                    <div class="meta">${n.date} · <span class="rank-tag">${n.authorRank}</span></div>
+                    ${canDelete?`<div style="margin-top:12px;"><button class="btn btn-sm btn-danger" onclick="deleteNotice(${n.id})"><i class="fas fa-trash"></i> حذف</button></div>`:''}
+                </div>
+            `).join('');
+        }
+
+        function deleteNotice(id) {
+            if (!confirm('حذف التنويه؟')) return;
+            const data = getData();
+            const idx = data.notices.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            const title = data.notices[idx].title;
+            data.notices.splice(idx, 1);
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'حذف تنويه', `تم حذف تنويه: ${title}`,
+            'notices', 'نجحت');
+            showToast('تم حذف التنويه', 'success');
+            renderNotices();
+        }
+
+        function showAddNoticeModal() {
+            const user = getCurrentUser();
+            if (!canManageNotices(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            showModal(`
+                <h2><i class="fas fa-plus"></i> تنويه جديد</h2>
+                <div class="form-group"><label>العنوان</label><input type="text" id="noticeTitle" /></div>
+                <div class="form-group"><label>المحتوى</label><textarea id="noticeContent"></textarea></div>
+                <div class="form-group"><label>رفع ملفات</label><input type="file" id="noticeFiles" multiple /></div>
+                <div class="form-actions"><button class="btn" onclick="addNotice()">نشر</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addNotice() {
+            const data = getData();
+            const user = getCurrentUser();
+            const title = document.getElementById('noticeTitle').value.trim() || 'تنويه';
+            const content = document.getElementById('noticeContent').value.trim() || 'نص التنويه';
+            if (!title || !content) { showToast('املأ الحقول', 'error'); return; }
+            const files = [];
+            const fi = document.getElementById('noticeFiles');
+            if (fi.files) { for (let f of fi.files) files.push(f.name); }
+
+            const n = { id: getNextId('notice'), title, content, date: new Date().toLocaleDateString('ar-SA'),
+                authorRank: getHighestRank(user) || 'مجهول', files };
+            data.notices.push(n);
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'نشر تنويه', `تنويه: ${title}`, 'notices',
+                'نجحت');
+            closeModal();
+            showToast('تم نشر التنويه', 'success');
+            renderNotices();
+        }
+
+        // ============================================================
+        // WARNINGS & PROMOTIONS
+        // ============================================================
+        function renderWarnings() {
+            const data = getData();
+            document.getElementById('warningsList').innerHTML = data.warnings.length === 0 ?
+                '<p class="text-muted">لا توجد تحذيرات</p>' :
+                data.warnings.map(w =>
+                    `<div><span class="badge badge-danger">تحذير</span> ${w.userName}: ${w.reason} (${w.date})</div>`)
+                .join('');
+            document.getElementById('promotionsList').innerHTML = data.promotions.length === 0 ?
+                '<p class="text-muted">لا توجد ترقيات</p>' :
+                data.promotions.map(p =>
+                    `<div><span class="badge badge-info">ترقية</span> ${p.userName} → ${p.newRank} (${p.date})</div>`)
+                .join('');
+        }
+
+        function renderEmployeeOfWeek() {
+            const data = getData();
+            const container = document.getElementById('employeeOfWeekList');
+            const user = getCurrentUser();
+            const canDelete = canDeleteAny(user);
+            if (data.employeeOfWeek.length === 0) { container.innerHTML = '<p class="text-muted">لا يوجد موظف أسبوع</p>'; return; }
+            const latest = data.employeeOfWeek[data.employeeOfWeek.length - 1];
+            container.innerHTML = `
+                <div style="background:#fef3c7;padding:12px;border-radius:12px;border-right:4px solid #c9a84c;">
+                    <strong><i class="fas fa-star" style="color:#c9a84c;"></i> ${latest.userName}</strong>
+                    <p class="text-muted">${latest.reason||'تميز في الأداء'}</p>
+                    <div class="text-muted">${latest.date} · من: ${latest.issuedBy}</div>
+                    ${canDelete?`<button class="btn btn-sm btn-danger" style="margin-top:8px;" onclick="deleteEmployeeOfWeek(${latest.id})"><i class="fas fa-trash"></i> حذف</button>`:''}
+                </div>
+            `;
+        }
+
+        function deleteEmployeeOfWeek(id) {
+            if (!confirm('حذف موظف الأسبوع؟')) return;
+            const data = getData();
+            const idx = data.employeeOfWeek.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            data.employeeOfWeek.splice(idx, 1);
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'حذف موظف الأسبوع', 'تم حذف موظف الأسبوع',
+                'warnings', 'نجحت');
+            showToast('تم حذف موظف الأسبوع', 'success');
+            renderEmployeeOfWeek();
+        }
+
+        function showAddWarningModal() {
+            const user = getCurrentUser();
+            if (!canManageWarnings(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            const data = getData();
+            let opts = data.users.map(u =>
+                `<option value="${u.id}">${getUserDisplayName(u)} (${(u.ranks||[]).join('، ')||'بدون رتب'})</option>`
+            ).join('');
+            showModal(`
+                <h2><i class="fas fa-exclamation-triangle"></i> تحذير وظيفي</h2>
+                <div class="form-group"><label>المستخدم</label><select id="warningUser">${opts}</select></div>
+                <div class="form-group"><label>سبب التحذير</label><textarea id="warningReason"></textarea></div>
+                <div class="form-actions"><button class="btn" onclick="addWarning()">إصدار</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addWarning() {
+            const data = getData();
+            const user = getCurrentUser();
+            const userId = parseInt(document.getElementById('warningUser').value);
+            const target = data.users.find(u => u.id === userId);
+            if (!target) return;
+            const reason = document.getElementById('warningReason').value.trim() || 'سبب غير محدد';
+            data.warnings.push({ id: getNextId('warning'), userId: target.id, userName: getUserDisplayName(target), reason,
+                date: new Date().toLocaleDateString('ar-SA'), issuedBy: getUserDisplayName(user) });
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'إصدار تحذير',
+                `تحذير لـ ${getUserDisplayName(target)}`, 'warnings', 'نجحت');
+            closeModal();
+            showToast('تم إصدار التحذير', 'success');
+            renderWarnings();
+        }
+
+        function showAddPromotionModal() {
+            const user = getCurrentUser();
+            if (!canManagePromotions(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            const data = getData();
+            let opts = data.users.map(u =>
+                `<option value="${u.id}">${getUserDisplayName(u)} (${(u.ranks||[]).join('، ')||'بدون رتب'})</option>`
+            ).join('');
+            const allRanks = ['مالك الموقع', 'وزير العدل', 'نائب وزير العدل', 'المسؤول الأعلى لوزارة العدل',
+                'نائب المسؤول الأعلى لوزارة العدل', 'رئيس القضاة', 'رئيس المحكمة', 'وكيل المحاكم',
+                'وكيل محكمة متمكن', 'وكيل محكمة خبير', 'وكيل محكمة', 'قاضي استئناف', 'قاضي متمكن', 'قاضي خبير',
+                'قاضي', 'مساعد القاضي', 'النائب العام', 'مستشار قانوني', 'محامي خبير', 'محامي مختص', 'محامي عام'
+            ];
+            let rankOpts = allRanks.map(r => `<option value="${r}">${r}</option>`).join('');
+            showModal(`
+                <h2><i class="fas fa-arrow-up"></i> ترقية</h2>
+                <div class="form-group"><label>المستخدم</label><select id="promoUser">${opts}</select></div>
+                <div class="form-group"><label>الرتبة الجديدة</label><select id="promoRank">${rankOpts}</select></div>
+                <div class="form-actions"><button class="btn" onclick="addPromotion()">ترقية</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addPromotion() {
+            const data = getData();
+            const user = getCurrentUser();
+            const userId = parseInt(document.getElementById('promoUser').value);
+            const target = data.users.find(u => u.id === userId);
+            if (!target) return;
+            const newRank = document.getElementById('promoRank').value;
+            const oldRanks = [...(target.ranks || [])];
+            if (!target.ranks) target.ranks = [];
+            if (!target.ranks.includes(newRank)) target.ranks.push(newRank);
+            data.promotions.push({ id: getNextId('promotion'), userId: target.id, userName: getUserDisplayName(target),
+                oldRanks: oldRanks.join('، '), newRank, date: new Date().toLocaleDateString('ar-SA'),
+                issuedBy: getUserDisplayName(user) });
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'إصدار ترقية',
+                `ترقية ${getUserDisplayName(target)} بإضافة رتبة ${newRank}`, 'promotions', 'نجحت');
+            closeModal();
+            showToast(`تمت ترقية ${getUserDisplayName(target)}`, 'success');
+            renderWarnings();
+            renderProfile();
+            updateUI();
+        }
+
+        function showAddEmployeeOfWeekModal() {
+            const user = getCurrentUser();
+            if (!canManageEmployeeOfWeek(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            const data = getData();
+            let opts = data.users.map(u =>
+                `<option value="${u.id}">${getUserDisplayName(u)} (${(u.ranks||[]).join('، ')||'بدون رتب'})</option>`
+            ).join('');
+            showModal(`
+                <h2><i class="fas fa-star" style="color:#c9a84c;"></i> موظف الأسبوع</h2>
+                <div class="form-group"><label>اختر الموظف</label><select id="employeeUser">${opts}</select></div>
+                <div class="form-group"><label>سبب التكريم</label><textarea id="employeeReason"></textarea></div>
+                <div class="form-actions"><button class="btn" onclick="addEmployeeOfWeek()">إضافة</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addEmployeeOfWeek() {
+            const data = getData();
+            const user = getCurrentUser();
+            const userId = parseInt(document.getElementById('employeeUser').value);
+            const target = data.users.find(u => u.id === userId);
+            if (!target) return;
+            const reason = document.getElementById('employeeReason').value.trim() || 'تميز في الأداء';
+            data.employeeOfWeek.push({ id: getNextId('employeeOfWeek'), userId: target.id, userName: getUserDisplayName(target),
+                reason, date: new Date().toLocaleDateString('ar-SA'), issuedBy: getUserDisplayName(user) });
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'إضافة موظف الأسبوع',
+                `تم اختيار ${getUserDisplayName(target)} كموظف الأسبوع`, 'warnings', 'نجحت');
+            closeModal();
+            showToast(`تم اختيار ${getUserDisplayName(target)} كموظف الأسبوع`, 'success');
+            renderEmployeeOfWeek();
+        }
+
+        // ============================================================
+        // RANK REQUESTS
+        // ============================================================
+        function renderRankRequests() {
+            const data = getData();
+            const container = document.getElementById('rankRequestsContainer');
+            const user = getCurrentUser();
+            if (data.rankRequests.length === 0) { container.innerHTML =
+                `<div class="card"><p class="text-muted">لا توجد طلبات</p></div>`; return; }
+
+            container.innerHTML = data.rankRequests.map(req => {
+                const statusClass = req.status === 'pending' ? 'pending' : req.status === 'approved' ? 'approved' :
+                'rejected';
+                const statusText = req.status === 'pending' ? 'قيد المراجعة' : req.status === 'approved' ? 'موافقة' :
+                    'مرفوضة';
+                const canManage = canManageRankRequests(user) && req.status === 'pending';
+                return `
+                    <div class="card">
+                        <div class="rank-request-item">
+                            <div class="request-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                                <div><strong>${req.applicantName}</strong> <span class="text-muted">(${req.applicantId})</span></div>
+                                <span class="request-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <p><strong>الرتبة المطلوبة:</strong> ${req.requestedRank}</p>
+                            <p><strong>السبب:</strong> ${req.reason}</p>
+                            <div class="text-muted">تاريخ الطلب: ${req.date}</div>
+                            ${canManage?`
+                                <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                                    <button class="btn btn-sm" onclick="approveRankRequest(${req.id})"><i class="fas fa-check"></i> موافقة</button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectRankRequest(${req.id})"><i class="fas fa-times"></i> رفض</button>
+                                </div>
+                            `:''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddRankRequestModal() {
+            showModal(`
+                <h2><i class="fas fa-plus"></i> طلب رتبة قضائية</h2>
+                <div class="form-group"><label>اسمك</label><input type="text" id="requestName" /></div>
+                <div class="form-group"><label>الأيدي</label><input type="text" id="requestId" /></div>
+                <div class="form-group"><label>الرتبة المطلوبة</label>
+                    <select id="requestRank">
+                        <option value="محامي عام">محامي عام</option>
+                        <option value="محامي مختص">محامي مختص</option>
+                        <option value="محامي خبير">محامي خبير</option>
+                        <option value="مستشار قانوني">مستشار قانوني</option>
+                        <option value="النائب العام">النائب العام</option>
+                        <option value="مساعد القاضي">مساعد القاضي</option>
+                        <option value="قاضي">قاضي</option>
+                        <option value="قاضي خبير">قاضي خبير</option>
+                        <option value="قاضي متمكن">قاضي متمكن</option>
+                        <option value="قاضي استئناف">قاضي استئناف</option>
+                        <option value="وكيل محكمة">وكيل محكمة</option>
+                        <option value="وكيل محكمة خبير">وكيل محكمة خبير</option>
+                        <option value="وكيل محكمة متمكن">وكيل محكمة متمكن</option>
+                        <option value="وكيل المحاكم">وكيل المحاكم</option>
+                        <option value="رئيس المحكمة">رئيس المحكمة</option>
+                        <option value="رئيس القضاة">رئيس القضاة</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>سبب الطلب</label><textarea id="requestReason"></textarea></div>
+                <div class="form-actions"><button class="btn" onclick="addRankRequest()">إرسال</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addRankRequest() {
+            const name = document.getElementById('requestName').value.trim();
+            const id = document.getElementById('requestId').value.trim();
+            const rank = document.getElementById('requestRank').value;
+            const reason = document.getElementById('requestReason').value.trim();
+            if (!name || !id || !reason) { showToast('املأ جميع الحقول', 'error'); return; }
+
+            const data = getData();
+            data.rankRequests.push({ id: getNextId('rankRequest'), applicantName: name, applicantId: id, requestedRank: rank,
+                reason, status: 'pending', date: new Date().toLocaleDateString('ar-SA') });
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(user ? getUserDisplayName(user) : name, user ? getHighestRank(user) || 'زائر' : 'زائر', 'تقديم طلب رتبة',
+                `قدم ${name} طلباً للحصول على رتبة ${rank}`, 'rank-requests', 'نجحت');
+            closeModal();
+            showToast('تم إرسال طلبك', 'success');
+            renderRankRequests();
+        }
+
+        function approveRankRequest(requestId) {
+            const data = getData();
+            const req = data.rankRequests.find(r => r.id === requestId);
+            if (!req) return;
+            req.status = 'approved';
+            const user = data.users.find(u => u.officialName === req.applicantName || u.customId === req.applicantId);
+            let added = false;
+            if (user) {
+                if (!user.ranks) user.ranks = [];
+                if (!user.ranks.includes(req.requestedRank)) { user.ranks.push(req.requestedRank);
+                    added = true;
+                    saveData(data); }
+            }
+            saveData(data);
+            const cu = getCurrentUser();
+            addLog(getUserDisplayName(cu), getHighestRank(cu) || 'مجهول', 'موافقة على طلب رتبة',
+                `تمت الموافقة على طلب ${req.applicantName} للحصول على رتبة ${req.requestedRank}${added?' (تمت إضافة الرتبة)':''}`,
+                'rank-requests', 'نجحت');
+            showToast('تمت الموافقة على الطلب' + (added ? ' وتمت إضافة الرتبة' : ''), 'success');
+            renderRankRequests();
+        }
+
+        function rejectRankRequest(requestId) {
+            const data = getData();
+            const req = data.rankRequests.find(r => r.id === requestId);
+            if (!req) return;
+            req.status = 'rejected';
+            saveData(data);
+            const cu = getCurrentUser();
+            addLog(getUserDisplayName(cu), getHighestRank(cu) || 'مجهول', 'رفض طلب رتبة',
+                `تم رفض طلب ${req.applicantName} للحصول على رتبة ${req.requestedRank}`, 'rank-requests', 'نجحت');
+            showToast('تم رفض الطلب', 'success');
+            renderRankRequests();
+        }
+
+        // ============================================================
+        // DISTRIBUTIONS
+        // ============================================================
+        function renderDistributions() {
+            const data = getData();
+            const container = document.getElementById('fieldDistributions');
+            const user = getCurrentUser();
+            const canDelete = canDeleteAny(user);
+            if (data.distributions.length === 0) { container.innerHTML = '<p class="text-muted">لا توجد توزيعات</p>'; return; }
+            container.innerHTML = data.distributions.map(d =>
+                `<div style="border-bottom:1px solid #edf2f7;padding:8px 0;">
+                    <div><i class="fas fa-map-pin"></i> ${d.location} - ${d.team} (${d.date})</div>
+                    ${canDelete?`<button class="btn btn-xs btn-danger" onclick="deleteDistribution(${d.id})"><i class="fas fa-trash"></i> حذف</button>`:''}
+                </div>`
+            ).join('');
+        }
+
+        function deleteDistribution(id) {
+            if (!confirm('حذف التوزيع؟')) return;
+            const data = getData();
+            const idx = data.distributions.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            data.distributions.splice(idx, 1);
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'حذف توزيع', 'تم حذف توزيع ميداني',
+                'operations', 'نجحت');
+            showToast('تم حذف التوزيع', 'success');
+            renderDistributions();
+        }
+
+        function showAddDistributionModal() {
+            const user = getCurrentUser();
+            if (!user) { showToast('الرجاء تسجيل الدخول', 'error'); return; }
+            if (!canManageDecisions(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            showModal(`
+                <h2><i class="fas fa-plus"></i> توزيع ميداني</h2>
+                <div class="form-group"><label>الموقع</label><input type="text" id="distLocation" /></div>
+                <div class="form-group"><label>الفريق</label><input type="text" id="distTeam" /></div>
+                <div class="form-actions"><button class="btn" onclick="addDistribution()">إضافة</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addDistribution() {
+            const data = getData();
+            const user = getCurrentUser();
+            const location = document.getElementById('distLocation').value.trim() || 'غير محدد';
+            const team = document.getElementById('distTeam').value.trim() || 'غير محدد';
+            data.distributions.push({ id: Date.now(), location, team, date: new Date().toLocaleDateString('ar-SA') });
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'إضافة توزيع', `توزيع في ${location}`,
+                'operations', 'نجحت');
+            closeModal();
+            showToast('تم إضافة التوزيع', 'success');
+            renderDistributions();
+        }
+
+        // ============================================================
+        // HEALTH ITEMS (Justice Items)
+        // ============================================================
+        function renderHealthClothes() {
+            const data = getData();
+            const container = document.getElementById('healthClothesContainer');
+            const user = getCurrentUser();
+            const canManage = canManageHealthItems(user);
+            if (data.healthClothes.length === 0) { container.innerHTML =
+                `<div class="card"><p class="text-muted">لا توجد أزياء قضائية</p></div>`; return; }
+
+            container.innerHTML = data.healthClothes.map(item => `
+                <div class="card">
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                        <div class="item-img">
+                            ${item.image?`<img src="${item.image}" alt="${item.name}" />`:`<i class="fas fa-tshirt"></i>`}
+                        </div>
+                        <div style="flex:1;">
+                            <h4>${item.name}</h4>
+                            <p><strong>النوع:</strong> ${item.type}</p>
+                            <p><strong>المقاس:</strong> ${item.size||'غير محدد'}</p>
+                            <p><strong>الكمية:</strong> ${item.quantity||'0'}</p>
+                            <p><strong>الجهة:</strong> ${item.department||'غير محدد'}</p>
+                            ${item.description?`<p><strong>الوصف:</strong> ${item.description}</p>`:''}
+                            <div class="text-muted">تمت الإضافة: ${item.date}</div>
+                            ${canManage?`<div style="margin-top:12px;"><button class="btn btn-sm btn-danger" onclick="deleteHealthItem('clothes',${item.id})"><i class="fas fa-trash"></i> حذف</button></div>`:''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHealthCars() {
+            const data = getData();
+            const container = document.getElementById('healthCarsContainer');
+            const user = getCurrentUser();
+            const canManage = canManageHealthItems(user);
+            if (data.healthCars.length === 0) { container.innerHTML =
+                `<div class="card"><p class="text-muted">لا توجد سيارات عدلية</p></div>`; return; }
+
+            container.innerHTML = data.healthCars.map(item => `
+                <div class="card">
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                        <div class="item-img">
+                            ${item.image?`<img src="${item.image}" alt="${item.name}" />`:`<i class="fas fa-car"></i>`}
+                        </div>
+                        <div style="flex:1;">
+                            <h4>${item.name}</h4>
+                            <p><strong>النوع:</strong> ${item.type}</p>
+                            <p><strong>الموديل:</strong> ${item.model||'غير محدد'}</p>
+                            <p><strong>رقم اللوحة:</strong> ${item.plateNumber||'غير محدد'}</p>
+                            <p><strong>الحالة:</strong> ${item.status||'جاهزة'}</p>
+                            ${item.description?`<p><strong>الوصف:</strong> ${item.description}</p>`:''}
+                            <div class="text-muted">تمت الإضافة: ${item.date}</div>
+                            ${canManage?`<div style="margin-top:12px;"><button class="btn btn-sm btn-danger" onclick="deleteHealthItem('cars',${item.id})"><i class="fas fa-trash"></i> حذف</button></div>`:''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddHealthItemModal(type) {
+            const user = getCurrentUser();
+            if (!canManageHealthItems(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            const isClothes = type === 'clothes';
+            const title = isClothes ? 'إضافة زي قضائي' : 'إضافة سيارة عدلية';
+            const typeLabel = isClothes ? 'نوع الزي' : 'نوع السيارة';
+            const typeOpts = isClothes ?
+                '<option value="عباءة قضائية">عباءة قضائية</option><option value="بدلة رسمية">بدلة رسمية</option><option value="ربطة عنق">ربطة عنق</option><option value="أخرى">أخرى</option>' :
+                '<option value="سيارة نقل">سيارة نقل</option><option value="سيارة رسمية">سيارة رسمية</option><option value="سيارة إسعاف">سيارة إسعاف</option><option value="أخرى">أخرى</option>';
+
+            const fields = isClothes ?
+                `<div class="form-group"><label>المقاس</label><input type="text" id="healthItemSize" placeholder="M, L, XL" /></div>
+                 <div class="form-group"><label>الكمية</label><input type="number" id="healthItemQuantity" placeholder="عدد القطع" /></div>
+                 <div class="form-group"><label>الجهة</label><input type="text" id="healthItemDepartment" placeholder="الجهة التابعة" /></div>` :
+                `<div class="form-group"><label>الموديل</label><input type="text" id="healthItemModel" placeholder="موديل السيارة" /></div>
+                 <div class="form-group"><label>رقم اللوحة</label><input type="text" id="healthItemPlate" placeholder="رقم اللوحة" /></div>
+                 <div class="form-group"><label>الحالة</label><select id="healthItemStatus"><option value="جاهزة">جاهزة</option><option value="قيد الصيانة">قيد الصيانة</option><option value="معطلة">معطلة</option><option value="مستأجرة">مستأجرة</option></select></div>`;
+
+            showModal(`
+                <h2><i class="fas ${isClothes?'fa-tshirt':'fa-car'}"></i> ${title}</h2>
+                <div class="form-group"><label>الاسم</label><input type="text" id="healthItemName" placeholder="اسم العنصر" /></div>
+                <div class="form-group"><label>${typeLabel}</label><select id="healthItemType">${typeOpts}</select></div>
+                ${fields}
+                <div class="form-group"><label>الوصف</label><textarea id="healthItemDescription" placeholder="وصف إضافي (اختياري)"></textarea></div>
+                <div class="form-group"><label>رفع صورة</label><input type="file" id="healthItemImage" accept="image/*" /></div>
+                <div class="form-actions"><button class="btn" onclick="addHealthItem('${type}')">إضافة</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addHealthItem(type) {
+            const data = getData();
+            const user = getCurrentUser();
+            const name = document.getElementById('healthItemName').value.trim();
+            const itemType = document.getElementById('healthItemType').value;
+            const description = document.getElementById('healthItemDescription').value.trim();
+            if (!name) { showToast('أدخل الاسم', 'error'); return; }
+
+            const fi = document.getElementById('healthItemImage');
+            if (fi.files && fi.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveHealthItem(type, name, itemType, description, e.target.result);
+                };
+                reader.readAsDataURL(fi.files[0]);
+            } else {
+                saveHealthItem(type, name, itemType, description, '');
+            }
+        }
+
+        function saveHealthItem(type, name, itemType, description, imageData) {
+            const data = getData();
+            const user = getCurrentUser();
+            const isClothes = type === 'clothes';
+            const key = isClothes ? 'healthClothes' : 'healthCars';
+            const label = isClothes ? 'زي' : 'سيارة';
+
+            let item = { id: getNextId(key), name, type: itemType, description, image: imageData,
+                date: new Date().toLocaleDateString('ar-SA'), addedBy: getUserDisplayName(user) };
+
+            if (isClothes) {
+                item.size = document.getElementById('healthItemSize').value.trim() || 'غير محدد';
+                item.quantity = document.getElementById('healthItemQuantity').value.trim() || '0';
+                item.department = document.getElementById('healthItemDepartment').value.trim() || 'غير محدد';
+            } else {
+                item.model = document.getElementById('healthItemModel').value.trim() || 'غير محدد';
+                item.plateNumber = document.getElementById('healthItemPlate').value.trim() || 'غير محدد';
+                item.status = document.getElementById('healthItemStatus').value || 'جاهزة';
+            }
+
+            data[key].push(item);
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', `إضافة ${label}`,
+                `تم إضافة ${label}: ${item.name}`, type === 'clothes' ? 'health-clothes' : 'health-cars', 'نجحت');
+            closeModal();
+            showToast(`تم إضافة ${label}`, 'success');
+            renderAll();
+        }
+
+        function deleteHealthItem(type, id) {
+            if (!confirm('حذف العنصر؟')) return;
+            const data = getData();
+            const key = type === 'clothes' ? 'healthClothes' : 'healthCars';
+            const idx = data[key].findIndex(x => x.id === id);
+            if (idx === -1) return;
+            const name = data[key][idx].name;
+            const label = type === 'clothes' ? 'زي' : 'سيارة';
+            data[key].splice(idx, 1);
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', `حذف ${label}`, `تم حذف ${label}: ${name}`,
+                type === 'clothes' ? 'health-clothes' : 'health-cars', 'نجحت');
+            showToast(`تم حذف ${label}`, 'success');
+            renderAll();
+        }
+
+        // ============================================================
+        // DISPATCH
+        // ============================================================
+        function renderDispatch() {
+            const data = getData();
+            const container = document.getElementById('dispatchContainer');
+            const user = getCurrentUser();
+            const canDelete = canDeleteAny(user);
+            if (data.dispatches.length === 0) { container.innerHTML =
+                `<div class="card"><p class="text-muted">لا توجد دسباتشات</p></div>`; return; }
+
+            let filtered = data.dispatches;
+            if (user && !canManageDispatch(user)) {
+                filtered = data.dispatches.filter(d => d.recipient === getUserDisplayName(user) || d.recipient === 'الكل');
+            }
+            if (filtered.length === 0) { container.innerHTML =
+                `<div class="card"><p class="text-muted">لا توجد دسباتشات موجهة لك</p></div>`; return; }
+
+            container.innerHTML = filtered.map(d => `
+                <div class="card">
+                    <h4><i class="fas fa-paper-plane"></i> ${d.title}</h4>
+                    <p>${d.content}</p>
+                    ${d.files&&d.files.length?`<div class="file-preview">${d.files.map(f=>`<span class="file-item"><i class="fas fa-paperclip"></i> ${f}</span>`).join('')}</div>`:''}
+                    <div class="meta">من: ${d.sender} · إلى: ${d.recipient} · ${d.date}</div>
+                    ${canDelete?`<button class="btn btn-sm btn-danger" onclick="deleteDispatch(${d.id})"><i class="fas fa-trash"></i> حذف</button>`:''}
+                </div>
+            `).join('');
+        }
+
+        function deleteDispatch(id) {
+            if (!confirm('حذف الدسباتش؟')) return;
+            const data = getData();
+            const idx = data.dispatches.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            data.dispatches.splice(idx, 1);
+            saveData(data);
+            const user = getCurrentUser();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'حذف دسباتش', 'تم حذف دسباتش', 'dispatch',
+                'نجحت');
+            showToast('تم حذف الدسباتش', 'success');
+            renderDispatch();
+        }
+
+        function showAddDispatchModal() {
+            const user = getCurrentUser();
+            if (!canManageDispatch(user)) { showToast('ليس لديك صلاحية', 'error'); return; }
+            const data = getData();
+            let opts = data.users.map(u => `<option value="${getUserDisplayName(u)}">${getUserDisplayName(u)}</option>`)
+            .join('');
+            showModal(`
+                <h2><i class="fas fa-plus"></i> دسباتش جديد</h2>
+                <div class="form-group"><label>العنوان</label><input type="text" id="dispatchTitle" /></div>
+                <div class="form-group"><label>المحتوى</label><textarea id="dispatchContent"></textarea></div>
+                <div class="form-group"><label>المستلم</label><select id="dispatchRecipient">${opts}<option value="الكل">الكل</option></select></div>
+                <div class="form-group"><label>رفع ملفات</label><input type="file" id="dispatchFiles" multiple /></div>
+                <div class="form-actions"><button class="btn" onclick="addDispatch()">إرسال</button><button class="btn btn-outline" onclick="closeModal()">إلغاء</button></div>
+            `);
+        }
+
+        function addDispatch() {
+            const data = getData();
+            const user = getCurrentUser();
+            const title = document.getElementById('dispatchTitle').value.trim() || 'دسباتش';
+            const content = document.getElementById('dispatchContent').value.trim() || 'نص الدسباتش';
+            if (!title || !content) { showToast('املأ الحقول', 'error'); return; }
+            const files = [];
+            const fi = document.getElementById('dispatchFiles');
+            if (fi.files) { for (let f of fi.files) files.push(f.name); }
+
+            data.dispatches.push({
+                id: Date.now(),
+                title,
+                content,
+                sender: getUserDisplayName(user),
+                recipient: document.getElementById('dispatchRecipient').value,
+                date: new Date().toLocaleDateString('ar-SA'),
+                files
+            });
+            saveData(data);
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'إنشاء دسباتش', `دسباتش: ${title}`, 'dispatch',
+                'نجحت');
+            closeModal();
+            showToast('تم إرسال الدسباتش', 'success');
+            renderDispatch();
+        }
+
+        // ============================================================
+        // MEMBERS
+        // ============================================================
+        function renderMembers() {
+            const user = getCurrentUser();
+            const container = document.getElementById('membersContainer');
+            if (!canViewMembers(user)) { container.innerHTML =
+            '<p class="text-muted">غير مصرح لك</p>'; return; }
+            const data = getData();
+            if (data.users.length === 0) { container.innerHTML = '<p class="text-muted">لا يوجد أعضاء</p>'; return; }
+
+            const cu = getCurrentUser();
+            container.innerHTML = data.users.map(u => {
+                const name = getUserDisplayName(u);
+                const ranks = (u.ranks || []).join('، ') || 'بدون رتب';
+                const letter = (u.officialName || u.username || 'U')[0].toUpperCase();
+                const canGive = canGiveSingleRank(cu) && u.id !== cu.id;
+                return `
+                    <div class="member-card">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="member-avatar" onclick="showUserProfile(${u.id})">${letter}</div>
+                            <div><strong>${name}</strong><div style="font-size:0.8rem;color:#64748b;">${ranks}</div></div>
+                        </div>
+                        ${canGive?`<button class="btn-gold give-rank-btn" onclick="showGiveRankModal(${u.id},true)"><i class="fas fa-plus"></i> رتبة</button>`:''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================================
+        // PROFILE
+        // ============================================================
+        function renderProfile() {
+            const user = getCurrentUser();
+            const container = document.getElementById('profileContent');
+            if (!user) { container.innerHTML = '<p class="text-muted">الرجاء تسجيل الدخول</p>'; return; }
+
+            const data = getData();
+            const name = getUserDisplayName(user);
+            const warnings = data.warnings.filter(w => w.userId === user.id || w.userName === name);
+            const promotions = data.promotions.filter(p => p.userId === user.id || p.userName === name);
+            const comments = data.comments.filter(c => c.author === name);
+            const ranks = (user.ranks || []).join('، ');
+
+            container.innerHTML = `
+                <h3>${name}</h3>
+                <p><strong>الأيدي:</strong> ${user.customId||'غير مسجل'}</p>
+                <p><strong>الاسم الرسمي:</strong> ${user.officialName||'غير محدد'}</p>
+                <p><strong>الرتب الحالية:</strong> ${ranks||'لا توجد'}</p>
+                <div style="margin-top:12px;"><h4>الترقيات (${promotions.length})</h4>
+                    ${promotions.map(p=>`<div>${p.date}: ${p.oldRanks||p.oldRank||'بدون'} → ${p.newRank}</div>`).join('')||'<p class="text-muted">لا توجد</p>'}</div>
+                <div style="margin-top:12px;"><h4>التحذيرات (${warnings.length})</h4>
+                    ${warnings.map(w=>`<div>${w.date}: ${w.reason}</div>`).join('')||'<p class="text-muted">لا توجد</p>'}</div>
+                <div style="margin-top:12px;"><h4>النشاطات</h4>
+                    <p class="text-muted">عدد التعليقات: ${comments.length}</p>
+                    <p class="text-muted">عدد العمليات: ${data.logs.filter(l=>l.username===name).length}</p>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // LOGS
+        // ============================================================
+        function renderLogs() {
+            const user = getCurrentUser();
+            const container = document.getElementById('logsContainer');
+            if (!canViewLogs(user)) { container.innerHTML = '<p class="text-muted">غير مصرح لك</p>'; return; }
+
+            const data = getData();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'مشاهدة سجل العمليات',
+                `قام ${getUserDisplayName(user)} بمشاهدة سجل العمليات`, 'logs', 'نجحت');
+
+            if (data.logs.length === 0) { container.innerHTML = '<p class="text-muted">لا توجد عمليات</p>'; return; }
+
+            const logs = data.logs.slice().reverse().slice(0, 200);
+            container.innerHTML = logs.map(log => `
+                <div class="log-entry">
+                    <span class="log-time">${log.timestamp}</span>
+                    <span class="log-user">${log.username} (${log.rank})</span>
+                    <span class="log-action">${log.action}</span>
+                    <span>${log.description}</span>
+                    <span style="color:#64748b;">${log.page}</span>
+                    <span class="badge ${log.status==='نجحت'?'':'badge-danger'}">${log.status}</span>
+                </div>
+            `).join('') + `<div style="text-align:center;margin-top:12px;padding:8px;background:#eef2f6;border-radius:12px;">
+                <span class="text-muted">إجمالي السجلات: ${data.logs.length}</span>
+            </div>`;
+        }
+
+        // ============================================================
+        // ARCHIVE
+        // ============================================================
+        function searchArchive() {
+            const query = document.getElementById('archiveSearch').value.toLowerCase().trim();
+            const type = document.getElementById('archiveType').value;
+            const data = getData();
+            let results = [];
+
+            const add = (arr, docType) => { results.push(...arr.map(d => ({ ...d, docType }))); };
+            if (type === 'all' || type === 'decree') add(data.decrees, 'مرسوم');
+            if (type === 'all' || type === 'decision') add(data.decisions, 'قرار');
+            if (type === 'all' || type === 'notice') add(data.notices, 'تنويه');
+            if (type === 'all' || type === 'warning') add(data.warnings, 'تحذير');
+            if (type === 'all' || type === 'distribution') add(data.distributions, 'توزيع');
+            if (type === 'all' || type === 'clothes') add(data.healthClothes, 'أزياء قضائية');
+            if (type === 'all' || type === 'cars') add(data.healthCars, 'سيارات عدلية');
+
+            if (query) {
+                results = results.filter(r =>
+                    (r.title || '').toLowerCase().includes(query) ||
+                    (r.content || '').toLowerCase().includes(query) ||
+                    (r.number || '').toLowerCase().includes(query) ||
+                    (r.location || '').toLowerCase().includes(query) ||
+                    (r.name || '').toLowerCase().includes(query)
+                );
+            }
+
+            const container = document.getElementById('archiveResults');
+            if (results.length === 0) { container.innerHTML = '<p class="text-muted">لا توجد نتائج</p>'; return; }
+
+            const user = getCurrentUser();
+            addLog(user ? getUserDisplayName(user) : 'زائر', user ? getHighestRank(user) || 'زائر' : 'زائر', 'بحث في الأرشيف',
+                `بحث عن: "${query||'الكل'}" - النتائج: ${results.length}`, 'archive', 'نجحت');
+
+            container.innerHTML = results.map(r =>
+                `<div style="border-bottom:1px solid #edf2f7;padding:10px 0;">
+                    <strong>${r.docType||'مستند'}</strong> - ${r.title||r.name||r.location||'بدون عنوان'}
+                    <span class="text-muted">(${r.issueDate||r.date||'غير محدد'})</span>
+                    ${r.files&&r.files.length?`<span class="badge"><i class="fas fa-paperclip"></i> ${r.files.length} ملف</span>`:''}
+                    ${r.image?`<span class="badge"><i class="fas fa-image"></i> صورة</span>`:''}
+                </div>`
+            ).join('');
+        }
+
+        // ============================================================
+        // NOTIFICATIONS
+        // ============================================================
+        function showNotifications() {
+            const user = getCurrentUser();
+            if (!user) { showToast('الرجاء تسجيل الدخول', 'error'); return; }
+            const data = getData();
+            addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'فتح الإشعارات', 'فتح مركز الإشعارات',
+                'notifications', 'نجحت');
+
+            const stats = [
+                { icon: 'fa-bullhorn', label: 'تنويهات', count: data.notices.length },
+                { icon: 'fa-exclamation-triangle', label: 'تحذيرات', count: data.warnings.length },
+                { icon: 'fa-arrow-up', label: 'ترقيات', count: data.promotions.length },
+                { icon: 'fa-scroll', label: 'مراسيم', count: data.decrees.length },
+                { icon: 'fa-file-signature', label: 'قرارات', count: data.decisions.length },
+                { icon: 'fa-star', label: 'موظف الأسبوع', count: data.employeeOfWeek.length },
+                { icon: 'fa-clipboard-list', label: 'طلبات رتب معلقة', count: data.rankRequests.filter(r => r.status ===
+                        'pending').length },
+                { icon: 'fa-tshirt', label: 'أزياء قضائية', count: data.healthClothes.length },
+                { icon: 'fa-car', label: 'سيارات عدلية', count: data.healthCars.length }
+            ];
+
+            showModal(`
+                <h2><i class="fas fa-bell"></i> مركز الإشعارات</h2>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    ${stats.map(s=>`<div class="card"><i class="fas ${s.icon}"></i> ${s.label}: ${s.count}</div>`).join('')}
+                </div>
+                <div class="form-actions"><button class="btn btn-outline" onclick="closeModal()">إغلاق</button></div>
+            `);
+        }
+
+        // ============================================================
+        // SESSION AUTO SAVE
+        // ============================================================
+        window.addEventListener('beforeunload', function() {
+            const user = getCurrentUser();
+            if (user) {
+                localStorage.setItem('moh_saved_session', JSON.stringify({ userId: user.id, savedAt: new Date()
+                        .toISOString() }));
+                addLog(getUserDisplayName(user), getHighestRank(user) || 'مجهول', 'خروج تلقائي',
+                    'تم حفظ الجلسة عند إغلاق المتصفح', 'auth', 'نجحت');
+            }
+        });
+
+        window.addEventListener('load', function() {
+            const saved = localStorage.getItem('moh_saved_session');
+            if (saved) {
+                try {
+                    const d = JSON.parse(saved);
+                    const diff = (new Date() - new Date(d.savedAt)) / (1000 * 60 * 60);
+                    if (diff < 24) {
+                        const data = getData();
+                        const u = data.users.find(x => x.id === d.userId);
+                        if (u) {
+                            sessionStorage.setItem('moh_user', JSON.stringify(u));
+                            updateUI();
+                            addLog(getUserDisplayName(u), getHighestRank(u) || 'مجهول', 'استعادة جلسة',
+                                `تم استعادة الجلسة`, 'auth', 'نجحت');
+                            showToast(`تم استعادة الجلسة`, 'success');
+                        }
+                    } else {
+                        localStorage.removeItem('moh_saved_session');
+                    }
+                } catch (e) {}
+            }
+            updateUI();
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        function loadMinisterData() {
+            const data = getData();
+            const m = data.minister;
+            document.getElementById('ministerName').textContent = m.name || 'وزير العدل';
+            document.getElementById('ministerBio').textContent = m.bio || '(بيانات الوزير)';
+            document.getElementById('ministerQuals').textContent = m.qual || '(بيانات الوزير)';
+            document.getElementById('ministerExperience').textContent = m.experience || '(بيانات الوزير)';
+            document.getElementById('ministerVision').textContent = m.vision || '(بيانات الوزير)';
+            document.getElementById('ministerMission').textContent = m.mission || '(بيانات الوزير)';
+            document.getElementById('ministerMessage').textContent = m.message || '(بيانات الوزير)';
+            document.getElementById('ministerAchievements').textContent = m.achievements || '(بيانات الوزير)';
+            document.getElementById('ministerEmail').textContent = m.email || '(بيانات الوزير)';
+            document.getElementById('ministerPhone').textContent = m.phone || '(بيانات الوزير)';
+            document.getElementById('ministerStartDate').textContent = m.startDate || '(بيانات الوزير)';
+        }
+
+        function initDefaultNews() {
+            const data = getData();
+            if (data.news.length === 0) {
+                data.news.push({ id: getNextId('news'), title: 'مرحباً بكم في نظام وزارة العدل',
+                    content: 'نظام إدارة العدل الإلكتروني كراون ستي - الإصدار النهائي',
+                    date: new Date().toLocaleDateString('ar-SA'), author: 'النظام', authorRank: 'نظام', files: [] });
+                saveData(data);
+            }
+        }
+
+        initDefaultNews();
+        loadMinisterData();
+        addLog('system', 'نظام', 'تشغيل النظام', 'تم تشغيل نظام وزارة العدل كراون ستي', 'system', 'نجحت');
+        updateUI();
+
+        console.log('⚖️ نظام وزارة العدل كراون ستي يعمل بشكل كامل');
+        console.log('👤 الحسابات: owner, justice_minister, deputy_justice, chief_justice, deputy_chief_justice, chief_judge');
         console.log('🔑 كلمة المرور للجميع: @2025 (مثل: JusticeMinister@2025)');
-        console.log('⚖️ تم تحويل النظام بنجاح من وزارة الصحة إلى وزارة العدل');
         console.log('📌 جميع العمليات مسجلة في سجل العمليات');
         console.log('📌 يتم حفظ الجلسة تلقائياً');
     </script>
